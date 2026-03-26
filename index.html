@@ -124,25 +124,30 @@
         };
         firebase.initializeApp(firebaseConfig);
 
-        // 2. PASSWORD AMMINISTRATORE (Cambiala qui sotto se vuoi)
-        const ADMIN_CODE = "DEVASTO2024"; 
+        // 2. PAROLA CHIAVE PER SBLOCCARE IL TUO PC (Inseriscila una volta sola)
+        const MASTER_KEY = "BOSS_TRAPPEREO_2024"; 
 
         const modal = document.getElementById("authModal");
         const authBtnMain = document.getElementById("mainBuyBtn");
 
-        // GESTIONE ACCESSO RISERVATO
+        // GESTIONE ACCESSO ULTRA-PRIVATO
         authBtnMain.addEventListener("click", (e) => {
             e.preventDefault();
             
-            // Chiede la password segreta
-            const userInput = prompt("Inserisci il codice segreto per accedere:");
-
-            if (userInput === ADMIN_CODE) {
-                // SE IL CODICE È GIUSTO: Apre il pannello Firebase
+            // Verifica se questo browser ha già il permesso salvato
+            if (localStorage.getItem("trappereo_admin") === "true") {
                 modal.style.display = "flex";
             } else {
-                // SE IL CODICE È SBAGLIATO O ANNULLATO: Messaggio per gli utenti
-                alert("Le prevendite ufficiali non sono ancora aperte. Segui @trappereo su IG per il drop.");
+                // Se non ha il permesso, prova a chiedere la chiave
+                const input = prompt("Accesso protetto. Inserisci codice sblocco:");
+                
+                if (input === MASTER_KEY) {
+                    localStorage.setItem("trappereo_admin", "true");
+                    alert("PC Autorizzato. Accesso Admin sbloccato.");
+                    modal.style.display = "flex";
+                } else {
+                    alert("Le prevendite ufficiali non sono ancora aperte. Segui @trappereo su IG per il drop.");
+                }
             }
         });
 
@@ -152,7 +157,7 @@
             const password = document.getElementById("password").value;
             firebase.auth().createUserWithEmailAndPassword(email, password)
                 .then(() => { alert("Account CREATO con successo!"); modal.style.display = "none"; })
-                .catch(err => alert("Errore Registrazione: " + err.message));
+                .catch(err => alert("Errore: " + err.message));
         };
 
         document.getElementById("btnSignIn").onclick = () => {
@@ -160,10 +165,10 @@
             const password = document.getElementById("password").value;
             firebase.auth().signInWithEmailAndPassword(email, password)
                 .then(() => { alert("Accesso ADMIN eseguito!"); modal.style.display = "none"; })
-                .catch(err => alert("Errore Accesso: " + err.message));
+                .catch(err => alert("Errore: " + err.message));
         };
 
-        // 4. FUNZIONI EXTRA (Fisarmonica FAQ e Chiusura Modale)
+        // 4. FISARMONICA FAQ
         document.querySelectorAll('.accordion-header').forEach(button => {
             button.addEventListener('click', () => {
                 const body = button.nextElementSibling;
