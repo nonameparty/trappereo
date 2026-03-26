@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CASSA POS | TRAPPEREO</title>
+    <title>CASSA SELEZIONE | TRAPPEREO</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700;900&display=swap" rel="stylesheet">
     <style>
         :root { --purple: #8a2be2; --green: #2ecc71; --dark: #000; --light: #ffffff; }
@@ -12,17 +12,16 @@
 
         /* HEADER */
         .header-cassa { height: 70px; background: #000; display: flex; justify-content: center; align-items: center; padding: 0 30px; border-bottom: 1px solid #222; }
-        
         .toggle-pay { 
             padding: 12px 40px; border-radius: 8px; border: 2px solid #333; 
             font-weight: 900; cursor: pointer; transition: 0.3s; text-transform: uppercase;
-            background: #000; color: #666; font-size: 14px; letter-spacing: 1px;
+            background: #000; color: #666; font-size: 14px;
         }
         .toggle-pay.active { background: var(--green); color: black; border-color: var(--green); box-shadow: 0 0 20px rgba(46, 204, 113, 0.3); }
 
         .main-container { display: flex; flex: 1; overflow: hidden; }
 
-        /* SINISTRA: MENU CHIARO (VISIBILITÀ MAX) */
+        /* MENU SINISTRA */
         .menu-grid { 
             flex: 1.7; background: var(--light); padding: 20px; 
             display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 130px; gap: 15px;
@@ -36,37 +35,42 @@
         .btn-item:active { transform: translateY(3px); box-shadow: none; }
         .btn-item span { color: var(--purple); font-size: 15px; margin-top: 5px; }
 
-        /* DESTRA: RIEPILOGO */
+        /* RIEPILOGO DESTRA */
         .summary-panel { flex: 1; background: #000; display: flex; flex-direction: column; border-left: 2px solid #222; }
         .summary-header { padding: 20px; font-size: 12px; letter-spacing: 2px; border-bottom: 1px solid #111; font-weight: 900; color: #444; text-transform: uppercase; }
-        
         .order-list { flex: 1; overflow-y: auto; padding: 15px; }
         
+        /* RIGA ORDINE */
         .order-row { 
             background: #0a0a0a; margin-bottom: 8px; padding: 18px; border-radius: 12px; 
-            display: flex; justify-content: space-between; align-items: center; border: 1px solid #1a1a1a;
+            display: flex; justify-content: space-between; align-items: center; 
+            border: 2px solid #1a1a1a; cursor: pointer; transition: 0.2s;
         }
+        /* STILE QUANDO SELEZIONATO */
+        .order-row.selected { 
+            border-color: var(--green); 
+            background: rgba(46, 204, 113, 0.1); 
+            transform: scale(1.02);
+        }
+        
         .row-name { font-weight: 900; font-size: 17px; text-transform: uppercase; color: white; }
         .row-price { color: var(--purple); font-size: 13px; font-weight: 700; }
         
         .row-controls { display: flex; align-items: center; gap: 12px; }
-        .qty-btn { width: 35px; height: 35px; border-radius: 8px; border: none; font-weight: 900; cursor: pointer; font-size: 18px; }
-        .minus { background: #1a1a1a; color: #ff4444; }
-        .plus { background: #1a1a1a; color: var(--green); }
-        .qty-val { font-size: 18px; font-weight: 900; min-width: 25px; text-align: center; color: white; }
+        .qty-btn { width: 35px; height: 35px; border-radius: 8px; border: none; font-weight: 900; cursor: pointer; font-size: 18px; background: #1a1a1a; color: #ff4444; }
 
-        /* FOOTER CON TOTALE SOTTO */
+        /* FOOTER */
         .summary-footer { padding: 20px; background: #050505; border-top: 1px solid #222; }
-        .total-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 0 5px; }
-        .total-label { font-size: 14px; font-weight: 900; color: #666; text-transform: uppercase; }
-        .total-amount { font-size: 38px; font-weight: 900; color: white; }
+        .total-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .total-label { font-size: 12px; font-weight: 900; color: #666; text-transform: uppercase; }
+        .total-amount { font-size: 42px; font-weight: 900; color: white; }
+        .total-amount.highlight { color: var(--green); text-shadow: 0 0 10px rgba(46, 204, 113, 0.5); }
 
         .btn-checkout { 
             width: 100%; padding: 22px; background: var(--purple); border: none; 
             border-radius: 12px; color: white; font-weight: 900; font-size: 20px; 
-            cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
+            cursor: pointer; text-transform: uppercase;
         }
-        .btn-checkout:active { background: #7022b8; }
     </style>
 </head>
 <body>
@@ -87,22 +91,21 @@
         </div>
 
         <div class="summary-panel">
-            <div class="summary-header">Riepilogo Ordine</div>
-            <div id="orderList" class="order-list">
-                </div>
+            <div class="summary-header" id="summaryTitle">Riepilogo Ordine</div>
+            <div id="orderList" class="order-list"></div>
             
             <div class="summary-footer">
                 <div class="total-box">
-                    <span class="total-label">Totale da pagare</span>
-                    <span class="total-amount"><span id="finalPrice">0</span>€</span>
+                    <span class="total-label" id="totalLabel">Totale ordine</span>
+                    <span class="total-amount" id="totalDisplay">0€</span>
                 </div>
-                <button class="btn-checkout" onclick="concludiVendita()">CHIUDI ORDINE</button>
+                <button class="btn-checkout" onclick="concludiVendita()" id="btnAction">CHIUDI ORDINE</button>
             </div>
         </div>
     </div>
 
     <script>
-        let carrello = [];
+        let carrello = []; // {nome, prezzo, qty, selected, id}
         let isSeparato = false;
 
         function toggleSeparato() {
@@ -111,29 +114,25 @@
             btn.innerText = isSeparato ? "PAGA SEPARATO: ON" : "PAGA SEPARATO: OFF";
             btn.classList.toggle('active');
             
-            // Riordina e raggruppa/esplode in automatico
+            // Quando cambiamo modalità, resettiamo le selezioni e riorganizziamo
+            carrello.forEach(i => i.selected = false);
             reorganizeCart();
         }
 
         function reorganizeCart() {
             if (isSeparato) {
-                // Esplode tutto in righe singole
-                let nuovoCarrello = [];
+                let nuovo = [];
                 carrello.forEach(item => {
                     for(let i=0; i < item.qty; i++) {
-                        nuovoCarrello.push({ nome: item.nome, prezzo: item.prezzo, qty: 1 });
+                        nuovo.push({ nome: item.nome, prezzo: item.prezzo, qty: 1, selected: false, id: Math.random() });
                     }
                 });
-                carrello = nuovoCarrello;
+                carrello = nuovo;
             } else {
-                // Raggruppa tutto per nome
                 let mappa = {};
                 carrello.forEach(item => {
-                    if (mappa[item.nome]) {
-                        mappa[item.nome].qty += item.qty;
-                    } else {
-                        mappa[item.nome] = { ...item };
-                    }
+                    if (mappa[item.nome]) { mappa[item.nome].qty += item.qty; } 
+                    else { mappa[item.nome] = { ...item, qty: item.qty, selected: false }; }
                 });
                 carrello = Object.values(mappa);
             }
@@ -142,62 +141,90 @@
 
         function addToCart(nome, prezzo) {
             if (isSeparato) {
-                carrello.push({ nome, prezzo, qty: 1 });
+                carrello.push({ nome, prezzo, qty: 1, selected: false, id: Math.random() });
             } else {
                 const esistente = carrello.find(i => i.nome === nome);
                 if (esistente) { esistente.qty++; } 
-                else { carrello.push({ nome, prezzo, qty: 1 }); }
+                else { carrello.push({ nome, prezzo, qty: 1, selected: false, id: Math.random() }); }
             }
             renderCart();
         }
 
-        function updateQty(index, delta) {
-            carrello[index].qty += delta;
-            if (carrello[index].qty <= 0) carrello.splice(index, 1);
+        function selectItem(index) {
+            if (!isSeparato) return; // Selezione attiva solo in modalità separata
+            carrello[index].selected = !carrello[index].selected;
+            renderCart();
+        }
+
+        function removeItem(index, event) {
+            event.stopPropagation(); // Evita di selezionare la riga mentre la elimini
+            carrello.splice(index, 1);
             renderCart();
         }
 
         function renderCart() {
             const list = document.getElementById('orderList');
-            const totalDisplay = document.getElementById('finalPrice');
-            
-            // Sempre in ordine alfabetico
+            const totalDisplay = document.getElementById('totalDisplay');
+            const totalLabel = document.getElementById('totalLabel');
+            const btnAction = document.getElementById('btnAction');
+
+            // Ordine alfabetico
             carrello.sort((a, b) => a.nome.localeCompare(b.nome));
 
             list.innerHTML = '';
-            let totale = 0;
+            let totaleSito = 0;
+            let totaleSelezionato = 0;
+            let countSelezionati = 0;
 
             carrello.forEach((item, index) => {
-                totale += (item.prezzo * item.qty);
+                totaleSito += (item.prezzo * item.qty);
+                if(item.selected) {
+                    totaleSelezionato += item.prezzo;
+                    countSelezionati++;
+                }
+
                 const row = document.createElement('div');
-                row.className = 'order-row';
-                
-                // Se separato metto la X, se unico metto + -
-                const controls = isSeparato ? 
-                    `<button class="qty-btn minus" onclick="updateQty(${index}, -1)">×</button>` : 
-                    `<div class="row-controls">
-                        <button class="qty-btn minus" onclick="updateQty(${index}, -1)">-</button>
-                        <span class="qty-val">${item.qty}</span>
-                        <button class="qty-btn plus" onclick="updateQty(${index}, 1)">+</button>
-                    </div>`;
+                row.className = `order-row ${item.selected ? 'selected' : ''}`;
+                row.onclick = () => selectItem(index);
 
                 row.innerHTML = `
                     <div>
-                        <div class="row-name">${item.nome}</div>
+                        <div class="row-name">${isSeparato ? '' : item.qty + 'x '}${item.nome}</div>
                         <div class="row-price">${item.prezzo}€</div>
                     </div>
-                    ${controls}
+                    <button class="qty-btn" onclick="removeItem(${index}, event)">×</button>
                 `;
                 list.appendChild(row);
             });
-            totalDisplay.innerText = totale;
+
+            // LOGICA TOTALE DINAMICO
+            if (isSeparato && countSelezionati > 0) {
+                totalDisplay.innerText = totaleSelezionato + "€";
+                totalDisplay.classList.add('highlight');
+                totalLabel.innerText = `Selezionati (${countSelezionati})`;
+                btnAction.innerText = "PAGA SELEZIONATI";
+            } else {
+                totalDisplay.innerText = totaleSito + "€";
+                totalDisplay.classList.remove('highlight');
+                totalLabel.innerText = "Totale ordine";
+                btnAction.innerText = isSeparato ? "PAGA TUTTO" : "CHIUDI ORDINE";
+            }
         }
 
         function concludiVendita() {
             if (carrello.length === 0) return;
-            // Qui puoi aggiungere il salvataggio su Firebase come abbiamo visto prima
-            alert("VENDITA EFFETTUATA!\nTotale: " + document.getElementById('finalPrice').innerText + "€");
-            carrello = [];
+            
+            const selezionati = carrello.filter(i => i.selected);
+            
+            if (isSeparato && selezionati.length > 0) {
+                // Paga solo i selezionati
+                alert("Pagati " + selezionati.length + " prodotti separatamente.");
+                carrello = carrello.filter(i => !i.selected);
+            } else {
+                // Paga tutto
+                alert("Vendita totale conclusa.");
+                carrello = [];
+            }
             renderCart();
         }
     </script>
