@@ -9,94 +9,47 @@
 </head>
 <body>
 
-    <div id="authModal" class="modal">
+    <div id="authModal" class="modal" style="display:none;">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
-            <h2 id="modalTitle">PANNELLO ADMIN</h2>
-            <form id="authForm">
-                <input type="text" id="regNome" placeholder="NOME" required>
-                <input type="text" id="regCognome" placeholder="COGNOME" required>
-                <input type="email" id="email" placeholder="EMAIL" required>
-                <input type="password" id="password" placeholder="PASSWORD" required>
-                <div class="auth-buttons-row">
-                    <button type="button" id="btnSignUp" class="btn-auth-viola">REGISTRA UTENTE</button>
-                    <button type="button" id="btnSignIn" class="btn-auth-outline">ACCEDI</button>
+            
+            <div id="adminPanel" style="text-align:center;">
+                <h2 style="color:white; margin-bottom: 20px;">PANNELLO STAFF</h2>
+                <div class="auth-buttons-row" style="display:flex; flex-direction:column; gap:15px;">
+                    <button type="button" id="showRegForm" class="btn-auth-viola">REGISTRA NUOVO STAFF</button>
+                    <button type="button" id="btnStaffLogin" class="btn-auth-outline">ACCEDI ALLA TUA DASHBOARD</button>
                 </div>
-            </form>
+            </div>
+
+            <div id="regForm" style="display:none;">
+                <h2 style="color:white; margin-bottom: 20px;">NUOVO ACCOUNT STAFF</h2>
+                <input type="text" id="regNome" placeholder="NOME" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px;">
+                <input type="text" id="regCognome" placeholder="COGNOME" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px;">
+                <input type="email" id="regEmail" placeholder="EMAIL" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px;">
+                <select id="regRuolo" style="width:100%; padding:12px; margin-bottom:20px; border-radius:8px;">
+                    <option value="PR">PR</option>
+                    <option value="CAPO-PR">CAPO-PR</option>
+                    <option value="ADMIN">ADMIN</option>
+                    <option value="FOUNDER">FOUNDER</option>
+                </select>
+                <button type="button" id="confirmReg" class="btn-auth-viola" style="width:100%;">GENERA E INVIA PASSWORD</button>
+                <p style="color:gray; font-size:12px; margin-top:10px; cursor:pointer;" onclick="location.reload()">← Torna indietro</p>
+            </div>
         </div>
     </div>
 
-    <nav class="navbar">
-        <div id="db-navLogo" class="nav-logo">...</div>
-        <div class="nav-links">
-            <a href="#faq" id="db-navInfo">INFO</a>
-            <a id="db-igLink" href="#" target="_blank">IG</a>
-        </div>
-    </nav>
-
+    <nav class="navbar"><div id="db-navLogo" class="nav-logo">TRAPPEREO</div></nav>
     <header class="hero">
-        <div class="hero-overlay"></div>
-        <div class="hero-content">
-            <h1 id="db-titoloHero" class="main-title">...</h1>
-            <p id="db-sottotitolo" class="subtitle">...</p>
-            <a href="#tickets" id="db-btnHero" class="btn-primary">...</a>
-        </div>
+        <h1 id="db-titoloHero" class="main-title">...</h1>
+        <p id="db-sottotitolo" class="subtitle">...</p>
+        <a href="#tickets" id="mainBuyBtn" class="btn-primary">ACQUISTA BIGLIETTI</a>
     </header>
-
-    <section class="locandina-digital">
-        <div class="alert-banner">
-            <h2 id="db-alertTitolo">...</h2>
-            <p id="db-alertRosso" class="red-text">...</p>
-            <p id="db-alertAvviso">...</p>
-            <small id="db-alertSmall">...</small>
-        </div>
-    </section>
-
-    <section id="tickets" class="tickets-section">
-        <div class="ticket-grid">
-            <div class="ticket-box">
-                <h3 id="db-t1-nome">...</h3>
-                <span id="db-t1-prezzo" class="price">...</span>
-                <p id="db-t1-desc">...</p>
-            </div>
-            <div class="ticket-box highlight">
-                <h3 id="db-t2-nome">...</h3>
-                <span id="db-t2-prezzo" class="price">...</span>
-                <p id="db-t2-desc">...</p>
-            </div>
-            <div class="ticket-box">
-                <h3 id="db-t3-nome">...</h3>
-                <span id="db-t3-prezzo" class="price">...</span>
-                <p id="db-t3-desc">...</p>
-            </div>
-        </div>
-        <p id="db-disclaimer" class="disclaimer">...</p>
-    </section>
-
-    <section id="faq" class="faq-section">
-        <h2 id="db-faqTitolo" class="sec-title">...</h2>
-        <div class="accordion">
-            <div class="accordion-item">
-                <button class="accordion-header"><span id="db-q1">...</span> <span>+</span></button>
-                <div class="accordion-body" id="db-a1">...</div>
-            </div>
-            <div class="accordion-item">
-                <button class="accordion-header"><span id="db-q2">...</span> <span>+</span></button>
-                <div class="accordion-body" id="db-a2">...</div>
-            </div>
-        </div>
-    </section>
-
-    <footer>
-        <p id="db-footerText">...</p>
-    </footer>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
     <script>
-        // CONFIGURAZIONE FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyATKCIfFo6uPwEUTZh00QIVvAJrq1L0Pw8",
             authDomain: "trappereo-7a89a.firebaseapp.com",
@@ -109,100 +62,62 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // --- FUNZIONE SINCRONIZZAZIONE TOTALE ---
-        function sincronizzaTutto() {
-            const docRef = db.collection("config").doc("testi");
-
-            docRef.onSnapshot((doc) => {
-                if (doc.exists) {
-                    const d = doc.data();
-                    // Associa ogni ID del sito a un campo su Firebase
-                    const mapping = {
-                        "db-siteTitle": d.siteTitle,
-                        "db-navLogo": d.navLogo,
-                        "db-navInfo": d.navInfo,
-                        "db-titoloHero": d.titoloHero,
-                        "db-sottotitolo": d.sottotitolo,
-                        "db-btnHero": d.btnHero,
-                        "db-alertTitolo": d.alertTitolo,
-                        "db-alertRosso": d.alertRosso,
-                        "db-alertAvviso": d.alertAvviso,
-                        "db-alertSmall": d.alertSmall,
-                        "db-t1-nome": d.t1_nome, "db-t1-prezzo": d.t1_prezzo, "db-t1-desc": d.t1_desc,
-                        "db-t2-nome": d.t2_nome, "db-t2-prezzo": d.t2_prezzo, "db-t2-desc": d.t2_desc,
-                        "db-t3-nome": d.t3_nome, "db-t3-prezzo": d.t3_prezzo, "db-t3-desc": d.t3_desc,
-                        "db-disclaimer": d.disclaimer,
-                        "db-faqTitolo": d.faqTitolo,
-                        "db-q1": d.q1, "db-a1": d.a1,
-                        "db-q2": d.q2, "db-a2": d.a2,
-                        "db-footerText": d.footerText
-                    };
-                    for (let id in mapping) {
-                        let el = document.getElementById(id);
-                        if (el && mapping[id]) el.innerText = mapping[id];
-                    }
-                    if(d.igLink) document.getElementById("db-igLink").href = d.igLink;
-                } else {
-                    // SE IL DATABASE È VUOTO, LO CREA AUTOMATICAMENTE
-                    docRef.set({
-                        siteTitle: "TRAPPEREO | BIELLA",
-                        navLogo: "TRAPPEREO",
-                        navInfo: "INFO",
-                        igLink: "https://instagram.com/tuoprofilo",
-                        titoloHero: "TRAPPEREO",
-                        sottotitolo: "BIELLA • IL DEVASTO",
-                        btnHero: "ACQUISTA BIGLIETTI",
-                        alertTitolo: "⚡ PROSSIMAMENTE ⚡",
-                        alertRosso: "🔥 INGRESSO 16+ 🔥",
-                        alertAvviso: "⚠️ ACCREDITO ONLINE OBBLIGATORIO ⚠️",
-                        alertSmall: "(Nessuna vendita in cassa)",
-                        t1_nome: "STANDARD", t1_prezzo: "15€", t1_desc: "Ingresso + 1 Drink",
-                        t2_nome: "SALTACODA ⚡", t2_prezzo: "20€", t2_desc: "Priorità + 1 Drink",
-                        t3_nome: "VIP 👑", t3_prezzo: "29€", t3_desc: "Area riservata + 3 Drink",
-                        disclaimer: "* Alcolici solo 18+.",
-                        faqTitolo: "DOMANDE FREQUENTI",
-                        q1: "Età minima?", a1: "Ingresso dai 16 anni con documento originale.",
-                        q2: "Posso pagare all'ingresso?", a2: "No, evento solo su accredito online.",
-                        footerText: "© TRAPPEREO BIELLA - Tutti i diritti riservati"
-                    });
-                }
-            });
-        }
-        sincronizzaTutto();
-
-        // --- LOGICA MODALE ADMIN (⌥ + Shift + A) ---
-        const modal = document.getElementById("authModal");
+        // 1. SCORCIATOIA: CMD/CTRL + SHIFT + A (Entra diretto)
         window.addEventListener("keydown", (e) => {
-            if (e.altKey && e.shiftKey && e.code === 'KeyA') modal.style.display = "flex";
-        });
-
-        document.getElementById("btnSignUp").onclick = () => {
-            const n = document.getElementById("regNome").value;
-            const c = document.getElementById("regCognome").value;
-            const em = document.getElementById("email").value;
-            const ps = document.getElementById("password").value;
-            
-            firebase.auth().createUserWithEmailAndPassword(em, ps).then((u) => {
-                return db.collection("iscritti").doc(u.user.uid).set({
-                    nome: n, cognome: c, email: em, data: firebase.firestore.FieldValue.serverTimestamp()
-                });
-            }).then(() => { 
-                alert("Utente registrato nel Database!"); 
-                modal.style.display = "none";
-                document.getElementById("authForm").reset();
-            }).catch(err => alert("Errore: " + err.message));
-        };
-
-        // ACCORDION FAQ
-        document.querySelectorAll('.accordion-header').forEach(b => {
-            b.onclick = () => {
-                const body = b.nextElementSibling;
-                body.style.display = body.style.display === 'block' ? 'none' : 'block';
+            if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.code === 'KeyA') {
+                document.getElementById("authModal").style.display = "flex";
             }
         });
 
-        document.querySelector(".close-modal").onclick = () => modal.style.display = "none";
-        window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; }
+        // 2. LOGICA REGISTRAZIONE CON PASSWORD DI SICUREZZA
+        document.getElementById("confirmReg").onclick = () => {
+            // Chiede la password ROBERT2003 prima di procedere
+            const check = prompt("Inserisci la Password di Sicurezza per registrare:");
+            
+            if (check === "ROBERT2003") {
+                const nome = document.getElementById("regNome").value;
+                const email = document.getElementById("regEmail").value;
+                const ruolo = document.getElementById("regRuolo").value;
+                
+                if(!nome || !email) { alert("Compila tutti i campi!"); return; }
+
+                // Genera Password Casuale
+                const autoPwd = "TR-" + Math.random().toString(36).slice(-6).toUpperCase();
+
+                firebase.auth().createUserWithEmailAndPassword(email, autoPwd)
+                .then((u) => {
+                    return db.collection("staff").doc(u.user.uid).set({
+                        nome: nome, email: email, ruolo: ruolo,
+                        data: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                })
+                .then(() => {
+                    // Invia Email tramite Google Script
+                    const postinoURL = "https://script.google.com/macros/s/AKfycbxvLmdizVKe3vpV8l2TJqRvVNXnVVs_bAoMnKX4eWKMN8xi1VYqyS-6cYV7H9tEqJaZ/exec";
+                    
+                    fetch(postinoURL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        body: JSON.stringify({ nome: nome, email: email, ruolo: ruolo, password: autoPwd })
+                    });
+
+                    alert("ACCOUNT CREATO! Password inviata via email.");
+                    location.reload();
+                })
+                .catch(err => alert("Errore: " + err.message));
+            } else {
+                alert("Password errata. Azione annullata.");
+            }
+        };
+
+        // Gestione Visualizzazione
+        document.getElementById("showRegForm").onclick = () => {
+            document.getElementById("adminPanel").style.display = "none";
+            document.getElementById("regForm").style.display = "block";
+        };
+
+        document.querySelector(".close-modal").onclick = () => document.getElementById("authModal").style.display = "none";
+        document.getElementById("mainBuyBtn").onclick = (e) => { e.preventDefault(); alert("Prevendite non ancora aperte."); };
     </script>
 </body>
 </html>
