@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRAPPEREO | BIELLA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-logo">TRAPPEREO</div>
+        <div class="nav-links">
+            <a href="#faq">INFO</a>
+            <a href="https://instagram.com" target="_blank">IG</a>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 class="main-title">TRAPPEREO</h1>
+            <p class="subtitle">BIELLA • IL DEVASTO • PROSSIMAMENTE</p>
+            <a href="#tickets" class="btn-primary">ACQUISTA BIGLIETTI</a>
+        </div>
+    </header>
+
+    <section class="locandina-digital">
+        <div class="alert-banner">
+            <h2>⚡ IL DEVASTO - PROSSIMAMENTE ⚡</h2>
+            <p class="red-text">🔥 INGRESSO 16+ CON DOCUMENTO CARTACEO 🔥</p>
+            <p>⚠️ EVENTO PRIVATO - ACCREDITO ONLINE OBBLIGATORIO ⚠️</p>
+            <small>(Nessuna vendita in cassa - Fino ad esaurimento posti)</small>
+        </div>
+    </section>
+
+    <section id="tickets" class="tickets-section">
+        <div class="ticket-grid">
+            <div class="ticket-box">
+                <h3>STANDARD</h3>
+                <span class="price">15€</span>
+                <ul>
+                    <li>Ingresso Garantito</li>
+                    <li>1 Drink Incluso *</li>
+                </ul>
+            </div>
+            <div class="ticket-box highlight">
+                <h3>SALTACODA ⚡</h3>
+                <span class="price">20€</span>
+                <ul>
+                    <li>Ingresso Prioritario</li>
+                    <li>1 Drink Incluso *</li>
+                    <li>Cambio Nome Incluso</li>
+                </ul>
+            </div>
+            <div class="ticket-box">
+                <h3>VIP BOSS 👑</h3>
+                <span class="price">29€</span>
+                <ul>
+                    <li>Ingresso Prioritario</li>
+                    <li>Area Riservata</li>
+                    <li><strong>3 DRINK INCLUSI *</strong></li>
+                    <li>Guardaroba Omaggio</li>
+                </ul>
+            </div>
+        </div>
+        <p class="disclaimer">* Alcolici solo 18+. Analcolici/Energy Drink per under 18.</p>
+    </section>
+
+    <section id="faq" class="faq-section">
+        <h2 class="sec-title">DOMANDE FREQUENTI</h2>
+        <div class="accordion">
+            <div class="accordion-item">
+                <button class="accordion-header">Età minima? <span>+</span></button>
+                <div class="accordion-body">Ingresso dai 16 anni compiuti con documento d'identità ORIGINALE e CARTACEO. No foto sul telefono.</div>
+            </div>
+            <div class="accordion-item">
+                <button class="accordion-header">Posso acquistare in cassa? <span>+</span></button>
+                <div class="accordion-body">No. TRAPPEREO è un evento privato. L'ingresso è consentito solo tramite accredito/prevendita online fino a esaurimento posti.</div>
+            </div>
+            <div class="accordion-item">
+                <button class="accordion-header">Quanto costa il cambio nome? <span>+</span></button>
+                <div class="accordion-body">Il cambio nome costa €3,99. È GRATUITO per i possessori di ticket Saltacoda o VIP.</div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; TRAPPEREO BIELLA - All Rights Reserved</p>
+    </footer>
+
+    <script>
+        document.querySelectorAll('.accordion-header').forEach(button => {
+            button.addEventListener('click', () => {
+                const body = button.nextElementSibling;
+                button.classList.toggle('active');
+                body.style.display = body.style.display === 'block' ? 'none' : 'block';
+            });
+        });
+    </script>
+</body>
+</html>
