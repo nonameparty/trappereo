@@ -7,51 +7,58 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
-        /* STILE POP-UP CENTRATO */
+        /* MODALE CENTRATO E STILIZZATO */
         .modal {
             display: none; position: fixed; z-index: 9999; left: 0; top: 0;
             width: 100%; height: 100%; background-color: rgba(0,0,0,0.95);
-            align-items: center; justify-content: center; backdrop-filter: blur(8px);
+            align-items: center; justify-content: center; backdrop-filter: blur(10px);
         }
         .modal-content {
-            background: #0a0a0a; border: 2px solid #8a2be2; padding: 35px;
-            border-radius: 25px; width: 90%; max-width: 400px; text-align: center;
+            background: #0a0a0a; border: 2px solid #8a2be2; padding: 40px;
+            border-radius: 30px; width: 90%; max-width: 400px; position: relative;
+            box-shadow: 0 0 60px rgba(138, 43, 226, 0.4); text-align: center;
         }
         .modal-content input, .modal-content select {
-            width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #222; background: #111; color: white;
+            width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; 
+            border: 1px solid #222; background: #111; color: white; font-size: 16px;
         }
-        .btn-staff-purple { background: #8a2be2; color: white; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: 900; width: 100%; text-transform: uppercase; margin-top: 10px; }
-        .btn-staff-outline { background: transparent; border: 1px solid #444; color: white; padding: 12px; border-radius: 10px; cursor: pointer; width: 100%; margin-top: 10px; }
-        .close-modal { position: absolute; right: 20px; top: 15px; color: #555; font-size: 30px; cursor: pointer; }
+        .btn-staff-purple { background: #8a2be2; color: white; border: none; padding: 16px; border-radius: 12px; cursor: pointer; font-weight: 900; width: 100%; text-transform: uppercase; margin-top: 10px; }
+        .btn-staff-outline { background: transparent; border: 1px solid #444; color: white; padding: 14px; border-radius: 12px; cursor: pointer; width: 100%; margin-top: 10px; }
+        .close-modal { position: absolute; right: 25px; top: 20px; color: #555; font-size: 35px; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <div id="authModal" class="modal">
-        <div class="modal-content" style="position: relative;">
+        <div class="modal-content">
             <span class="close-modal" onclick="closeModal()">&times;</span>
+            
             <div id="staffMenu">
-                <h2 style="color:white; font-weight: 900; margin-bottom: 25px;">STAFF HUB</h2>
+                <h2 style="color:white; font-weight: 900; margin-bottom: 30px;">STAFF HUB</h2>
                 <button type="button" onclick="showSection('loginForm')" class="btn-staff-purple">ACCEDI</button>
-                <button type="button" onclick="showSection('regForm')" class="btn-staff-outline">REGISTRA PR</button>
+                <button type="button" onclick="showSection('regForm')" class="btn-staff-outline">REGISTRA STAFF</button>
             </div>
+
             <div id="loginForm" style="display:none;">
                 <h2 style="color:white; margin-bottom: 20px;">LOGIN</h2>
                 <input type="email" id="loginEmail" placeholder="EMAIL">
                 <input type="password" id="loginPwd" placeholder="PASSWORD">
                 <button type="button" id="btnDoLogin" class="btn-staff-purple">ENTRA</button>
-                <p style="color:#555; margin-top:15px; cursor:pointer;" onclick="showSection('staffMenu')">← INDIETRO</p>
+                <p style="color:#555; margin-top:20px; cursor:pointer;" onclick="showSection('staffMenu')">← INDIETRO</p>
             </div>
+
             <div id="regForm" style="display:none;">
-                <h2 style="color:white; margin-bottom: 20px;">NUOVO PR</h2>
+                <h2 style="color:white; margin-bottom: 20px;">NUOVO ACCOUNT</h2>
                 <input type="text" id="regNome" placeholder="NOME">
                 <input type="email" id="regEmail" placeholder="EMAIL">
                 <select id="regRuolo">
                     <option value="PR">PR</option>
+                    <option value="CAPO-PR">CAPO-PR</option>
+                    <option value="ADMIN">ADMIN</option>
                     <option value="FOUNDER">FOUNDER</option>
                 </select>
-                <button type="button" id="confirmReg" class="btn-staff-purple">INVIA PASSWORD</button>
-                <p style="color:#555; margin-top:15px; cursor:pointer;" onclick="showSection('staffMenu')">← INDIETRO</p>
+                <button type="button" id="confirmReg" class="btn-staff-purple">GENERA E INVIA PASSWORD</button>
+                <p style="color:#555; margin-top:20px; cursor:pointer;" onclick="showSection('staffMenu')">← INDIETRO</p>
             </div>
         </div>
     </div>
@@ -70,22 +77,22 @@
     <section class="alert-section">
         <div class="alert-banner">
             <h2 id="db-alertTitolo">⚡ PROSSIMAMENTE ⚡</h2>
-            <p id="db-alertRosso" style="color: red; font-weight: bold;">🔥 INGRESSO 16+ 🔥</p>
-            <p id="db-alertAvviso">⚠️ ACCREDITO OBBLIGATORIO ⚠️</p>
+            <p id="db-alertRosso" style="color:red; font-weight:bold;">🔥 INGRESSO 16+ 🔥</p>
+            <p id="db-alertAvviso">⚠️ ACCREDITO ONLINE OBBLIGATORIO ⚠️</p>
         </div>
     </section>
 
-    <section id="tickets" class="tickets-section" style="padding: 50px 20px; text-align: center;">
-        <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
-            <div style="background: #111; padding: 30px; border-radius: 20px; border: 1px solid #333; min-width: 250px;">
-                <h3>EARLY BIRD</h3>
-                <h2 id="db-prezzo1" style="color: #8a2be2;">15€</h2>
+    <section id="tickets" class="tickets-section">
+        <div class="ticket-grid">
+            <div class="ticket-box">
+                <h3>STANDARD</h3>
+                <span class="price">15€</span>
                 <p>Ingresso + 1 Drink</p>
             </div>
-            <div style="background: #111; padding: 30px; border-radius: 20px; border: 2px solid #8a2be2; min-width: 250px;">
-                <h3>SALTACODA</h3>
-                <h2 id="db-prezzo2" style="color: #8a2be2;">20€</h2>
-                <p>Ingresso Rapido + 1 Drink</p>
+            <div class="ticket-box highlight">
+                <h3>SALTACODA ⚡</h3>
+                <span class="price">20€</span>
+                <p>Priorità + 1 Drink</p>
             </div>
         </div>
     </section>
@@ -107,7 +114,7 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // SCORCIATOIA ⌘ + SHIFT + F
+        // 1. SCORCIATOIA MAC
         window.addEventListener("keydown", (e) => {
             if (e.metaKey && e.shiftKey && e.code === 'KeyF') {
                 e.preventDefault();
@@ -115,41 +122,64 @@
             }
         });
 
-        // REGISTRAZIONE CON ROBERT2003
+        // 2. REGISTRAZIONE STAFF (PROTEZIONE TOTALE ROBERT2003)
         document.getElementById("confirmReg").onclick = function() {
-            const passSecurity = prompt("PASSWORD DI SICUREZZA:");
-            if (passSecurity === "ROBERT2003") {
+            // Chiede la password PRIMA di fare qualsiasi altra cosa
+            const masterCheck = prompt("AUTORIZZAZIONE RICHIESTA:");
+            
+            if (masterCheck === "ROBERT2003") {
                 const email = document.getElementById("regEmail").value;
                 const nome = document.getElementById("regNome").value;
                 const ruolo = document.getElementById("regRuolo").value;
+
+                if(!email || !nome) { alert("Mancano dei dati!"); return; }
+
+                // Genera Password Casuale
                 const autoPwd = "TR-" + Math.random().toString(36).slice(-6).toUpperCase();
 
                 firebase.auth().createUserWithEmailAndPassword(email, autoPwd).then((u) => {
-                    return db.collection("staff").doc(u.user.uid).set({ nome, email, ruolo });
+                    return db.collection("staff").doc(u.user.uid).set({ 
+                        nome: nome, 
+                        email: email, 
+                        ruolo: ruolo, 
+                        dataCreazione: new Date() 
+                    });
                 }).then(() => {
+                    // Chiama lo script Google per inviare l'email
                     const postino = "https://script.google.com/macros/s/AKfycbxvLmdizVKe3vpV8l2TJqRvVNXnVVs_bAoMnKX4eWKMN8xi1VYqyS-6cYV7H9tEqJaZ/exec";
-                    fetch(postino, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ nome, email, ruolo, password: autoPwd }) });
-                    alert("Account creato e Mail inviata!");
+                    fetch(postino, { 
+                        method: 'POST', 
+                        mode: 'no-cors', 
+                        body: JSON.stringify({ nome, email, ruolo, password: autoPwd }) 
+                    });
+                    alert("REGISTRAZIONE COMPLETATA! La password è stata inviata via mail.");
                     location.reload();
-                }).catch(err => alert(err.message));
-            } else { alert("Password Errata!"); }
+                }).catch(err => alert("Errore Firebase: " + err.message));
+            } else {
+                alert("PASSWORD ERRATA. Registrazione annullata.");
+            }
         };
 
+        // 3. LOGIN
         document.getElementById("btnDoLogin").onclick = () => {
             const email = document.getElementById("loginEmail").value;
             const pass = document.getElementById("loginPwd").value;
-            firebase.auth().signInWithEmailAndPassword(email, pass).then(() => { 
-                alert("Bentornato!"); location.reload(); 
-            }).catch(err => alert(err.message));
+            firebase.auth().signInWithEmailAndPassword(email, pass)
+                .then(() => { alert("Login successo!"); closeModal(); })
+                .catch(err => alert("Email o Password errati."));
         };
 
+        // UI ACTIONS
         function showSection(id) {
             document.getElementById("staffMenu").style.display = "none";
             document.getElementById("loginForm").style.display = "none";
             document.getElementById("regForm").style.display = "none";
             document.getElementById(id).style.display = "block";
         }
-        function closeModal() { document.getElementById("authModal").style.display = "none"; showSection('staffMenu'); }
+        function closeModal() { 
+            document.getElementById("authModal").style.display = "none"; 
+            showSection('staffMenu'); 
+        }
     </script>
 </body>
 </html>
