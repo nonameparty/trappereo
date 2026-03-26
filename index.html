@@ -10,33 +10,47 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background: #000; color: white; overflow-x: hidden; }
 
-        /* NAVBAR & HERO (Basato su Screenshot 1 e 2) */
+        /* HERO ORIGINALE (Screenshot 1 & 2) */
         .navbar { padding: 25px 5%; position: absolute; width: 100%; z-index: 10; font-weight: 900; letter-spacing: 2px; }
-        .hero { height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1514525253361-bee8a187446b?auto=format&fit=crop&w=1920&q=80'); background-size: cover; background-position: center; }
-        .main-title { font-size: clamp(50px, 12vw, 110px); font-weight: 900; text-transform: uppercase; text-shadow: 6px 6px 0px var(--purple); margin-bottom: 10px; }
+        .hero { 
+            height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            text-align: center; 
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                        url('https://images.unsplash.com/photo-1514525253361-bee8a187446b?auto=format&fit=crop&w=1920&q=80'); 
+            background-size: cover; 
+            background-position: center; 
+        }
+        .main-title { 
+            font-size: clamp(50px, 12vw, 110px); 
+            font-weight: 900; 
+            text-transform: uppercase; 
+            text-shadow: 7px 7px 0px var(--purple); /* Ombra viola originale */
+            margin-bottom: 10px; 
+        }
         .subtitle { font-size: 16px; font-weight: 700; letter-spacing: 4px; color: #bbb; text-transform: uppercase; margin-bottom: 30px; }
         .btn-primary { background: var(--purple); color: white; padding: 20px 45px; border-radius: 50px; text-decoration: none; font-weight: 900; transition: 0.3s; display: inline-block; }
 
-        /* BANNER VIOLA (Ripristinato come richiesto) */
-        .alert-section { background: var(--purple); padding: 60px 20px; text-align: center; border-bottom: 5px solid #000; }
-        .alert-section h2 { font-size: 38px; font-weight: 900; letter-spacing: 1px; }
+        /* BANNER VIOLA (Screenshot 1/2) */
+        .alert-section { background: var(--purple); padding: 60px 20px; text-align: center; }
         .white-box { background: white; color: var(--red); display: inline-block; padding: 12px 35px; font-weight: 900; font-size: 26px; margin: 20px 0; border-radius: 10px; text-transform: uppercase; }
-        .alert-section p { font-weight: 700; letter-spacing: 1px; font-size: 20px; text-transform: uppercase; }
 
-        /* SEZIONE TICKETS (Incluso VIP) */
+        /* SEZIONE TICKETS (Recupero Saltacoda e Dettagli) */
         .tickets-container { padding: 80px 5%; display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; background: #000; }
-        .ticket-card { background: #0e0e0e; border: 1px solid #222; padding: 50px 30px; border-radius: 40px; text-align: center; width: 100%; max-width: 380px; transition: 0.4s; }
+        .ticket-card { background: #0e0e0e; border: 1px solid #222; padding: 50px 30px; border-radius: 40px; text-align: center; width: 100%; max-width: 380px; }
         .ticket-card.vip { border: 3px solid var(--purple); box-shadow: 0 0 30px rgba(138,43,226,0.3); transform: scale(1.05); }
         .ticket-card h3 { font-size: 28px; font-weight: 900; margin-bottom: 15px; }
         .ticket-card .price { font-size: 55px; font-weight: 900; color: var(--purple); display: block; margin-bottom: 25px; }
-        .ticket-card p { color: #888; font-weight: 600; line-height: 1.6; }
+        .ticket-card p { color: #ccc; font-weight: 500; line-height: 1.6; margin-bottom: 5px; }
 
         /* MODALE STAFF (⌘ + SHIFT + F) */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); align-items: center; justify-content: center; backdrop-filter: blur(20px); }
-        .modal-content { background: #000; border: 2px solid var(--purple); padding: 45px; border-radius: 35px; width: 95%; max-width: 420px; position: relative; text-align: center; box-shadow: 0 0 50px rgba(138, 43, 226, 0.2); }
+        .modal-content { background: #000; border: 2px solid var(--purple); padding: 45px; border-radius: 35px; width: 95%; max-width: 420px; position: relative; text-align: center; }
         .modal-content input, .modal-content select { width: 100%; padding: 18px; margin-bottom: 15px; background: #111; border: 1px solid #222; color: white; border-radius: 12px; font-size: 16px; outline: none; }
         .btn-action { background: var(--purple); color: white; border: none; width: 100%; padding: 18px; border-radius: 12px; font-weight: 900; cursor: pointer; text-transform: uppercase; margin-top: 10px; }
-        .close-btn { position: absolute; top: 20px; right: 25px; font-size: 30px; cursor: pointer; color: #444; }
+        .back-link { color: #555; cursor: pointer; display: block; margin-top: 20px; font-weight: 700; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -54,37 +68,55 @@
     <section class="alert-section">
         <h2>⚡ PROSSIMAMENTE ⚡</h2>
         <div class="white-box">🔥 INGRESSO 16+ 🔥</div>
-        <p>⚠️ ACCREDITO ONLINE OBBLIGATORIO ⚠️</p>
+        <p style="font-weight: 800;">⚠️ ACCREDITO ONLINE OBBLIGATORIO ⚠️</p>
     </section>
 
     <section id="tickets" class="tickets-container">
         <div class="ticket-card">
             <h3>STANDARD</h3>
             <span class="price">15€</span>
-            <p>Ingresso Garantito<br>+ 1 Drink Incluso</p>
+            <p>✅ Ingresso Garantito</p>
+            <p>✅ 1 Drink Incluso</p>
         </div>
         <div class="ticket-card vip">
-            <h3>TICKET VIP ⚡</h3>
+            <h3>VIP SALTACONDA ⚡</h3>
             <span class="price">25€</span>
-            <p>Ingresso Prioritario SALTACODA<br>Accesso Area Privé<br>+ 1 Drink Premium</p>
+            <p>✅ Ingresso Prioritario (No Coda)</p>
+            <p>✅ 1 Drink Premium</p>
+            <p>✅ Accesso Area Privé</p>
         </div>
     </section>
 
     <div id="authModal" class="modal">
         <div class="modal-content">
-            <span class="close-btn" onclick="document.getElementById('authModal').style.display='none'">&times;</span>
-            <div id="regForm">
-                <h2 style="margin-bottom:30px; font-weight:900; letter-spacing: 1px;">NUOVO ACCOUNT</h2>
+            <div id="staffMenu">
+                <h2 style="margin-bottom:30px; font-weight:900;">AREA STAFF</h2>
+                <button class="btn-action" onclick="showView('loginView')">ACCEDI</button>
+                <button class="btn-action" style="background:transparent; border:1px solid #333; margin-top:15px;" onclick="showView('regView')">REGISTRATI</button>
+            </div>
+
+            <div id="loginView" style="display:none;">
+                <h2 style="margin-bottom:20px;">ACCEDI</h2>
+                <input type="email" id="lEmail" placeholder="EMAIL">
+                <input type="password" id="lPass" placeholder="PASSWORD">
+                <button class="btn-action" id="doLogin">ENTRA</button>
+                <span class="back-link" onclick="showView('staffMenu')">← INDIETRO</span>
+            </div>
+
+            <div id="regView" style="display:none;">
+                <h2 style="margin-bottom:20px;">REGISTRATI</h2>
                 <input type="text" id="rNome" placeholder="NOME E COGNOME">
                 <input type="email" id="rEmail" placeholder="EMAIL">
                 <select id="rRuolo">
                     <option value="PR">PR</option>
                     <option value="CAPO-PR">CAPO-PR</option>
                     <option value="ADMIN">ADMIN</option>
-                    <option value="FOUNDER">FOUNDER</option>
                 </select>
-                <button class="btn-action" id="doReg">GENERA E INVIA PASSWORD</button>
+                <button class="btn-action" id="doReg">GENERA PASSWORD</button>
+                <span class="back-link" onclick="showView('staffMenu')">← INDIETRO</span>
             </div>
+            
+            <span style="position:absolute; top:20px; right:25px; font-size:30px; cursor:pointer; color:#444;" onclick="closeModal()">&times;</span>
         </div>
     </div>
 
@@ -105,7 +137,7 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Scorciatoia da tastiera per aprire il pannello
+        // ⌘ + SHIFT + F
         window.addEventListener("keydown", (e) => {
             if (e.metaKey && e.shiftKey && e.code === 'KeyF') {
                 e.preventDefault();
@@ -113,46 +145,41 @@
             }
         });
 
-        // REGISTRAZIONE CON PROTEZIONE OBBLIGATORIA ROBERT2003
+        // REGISTRAZIONE (CHIEDE CODICE)
         document.getElementById("doReg").onclick = () => {
-            const security = prompt("PASSWORD DI SICUREZZA:");
-            
-            if (security === "ROBERT2003") {
+            const code = prompt("INSERISCI CODICE FOUNDER PER REGISTRARE:");
+            if (code === "ROBERT2003") {
                 const email = document.getElementById("rEmail").value;
                 const nome = document.getElementById("rNome").value;
                 const ruolo = document.getElementById("rRuolo").value;
-                
-                if(!email || !nome) { alert("Compila tutti i campi!"); return; }
-
-                // Genera password casuale
                 const autoPwd = "TR-" + Math.random().toString(36).slice(-6).toUpperCase();
 
+                if(!email || !nome) { alert("Dati mancanti!"); return; }
+
                 auth.createUserWithEmailAndPassword(email, autoPwd).then((u) => {
-                    return db.collection("staff").doc(u.user.uid).set({ 
-                        nome: nome, 
-                        email: email, 
-                        ruolo: ruolo, 
-                        dataCreazione: new Date() 
-                    });
+                    return db.collection("staff").doc(u.user.uid).set({ nome, email, ruolo, data: new Date() });
                 }).then(() => {
-                    // INVIO EMAIL tramite il tuo nuovo script
-                    const scriptURL = "https://script.google.com/macros/s/AKfycbw7fKHYnZZcRjx5KcPY21DeADnCfBuGHAWGJHNQ85v36g8oESsHxPl5jhjfPMFgriSf/exec";
-                    
-                    fetch(scriptURL, {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        body: JSON.stringify({ nome: nome, email: email, ruolo: ruolo, password: autoPwd })
+                    fetch("https://script.google.com/macros/s/AKfycbw7fKHYnZZcRjx5KcPY21DeADnCfBuGHAWGJHNQ85v36g8oESsHxPl5jhjfPMFgriSf/exec", {
+                        method: 'POST', mode: 'no-cors', body: JSON.stringify({ nome, email, ruolo, password: autoPwd })
                     });
-                    
-                    alert("ACCOUNT CREATO! La password è stata inviata via mail.");
+                    alert("Account creato! Controlla la mail per la password.");
                     location.reload();
-                }).catch(err => {
-                    alert("Errore Firebase: " + err.message);
-                });
-            } else {
-                alert("PASSWORD ERRATA! Accesso negato.");
-            }
+                }).catch(err => alert(err.message));
+            } else { alert("Codice errato!"); }
         };
+
+        // LOGIN (SENZA CODICE)
+        document.getElementById("doLogin").onclick = () => {
+            auth.signInWithEmailAndPassword(document.getElementById("lEmail").value, document.getElementById("lPass").value)
+            .then(() => alert("Accesso effettuato!"))
+            .catch(err => alert("Email o Password errati."));
+        };
+
+        function showView(viewId) {
+            ['staffMenu', 'loginView', 'regView'].forEach(id => document.getElementById(id).style.display = 'none');
+            document.getElementById(viewId).style.display = 'block';
+        }
+        function closeModal() { document.getElementById("authModal").style.display = "none"; showView('staffMenu'); }
     </script>
 </body>
 </html>
