@@ -1,13 +1,27 @@
 :root {
-    --bg-light: #fdfaf5; /* Crema/Panna, base pulita */
+    --bg-light: #fdfaf5; 
     --black: #0a0a0a;
-    --accent-purple: #7b00ff; /* Viola profondo, nuovo colore accento */
-    --accent-dark-purple: #5600b3; /* Viola scuro per le ombre */
+    --accent-purple: #7b00ff; 
+    --accent-dark-purple: #5600b3; 
     --white: #ffffff;
     --gray-text: #4a4a4a;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+/* FIX FONDAMENTALE PER MOBILE: Blocca lo scroll orizzontale */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+}
+
 body { 
     background: var(--bg-light); 
     color: var(--black); 
@@ -21,77 +35,114 @@ body {
     display: flex; justify-content: space-between; align-items: center;
     background: var(--black); z-index: 1000;
 }
-.nav-logo { color: var(--white); font-weight: 900; font-size: 1.4rem; letter-spacing: 2px; }
-.nav-links a { color: var(--white); text-decoration: none; margin-left: 20px; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; }
+.nav-logo { color: var(--white); font-weight: 900; font-size: 1.2rem; letter-spacing: 2px; }
+.nav-links a { color: var(--white); text-decoration: none; margin-left: 15px; font-weight: 600; text-transform: uppercase; font-size: 0.7rem; }
 
-/* HERO - Testo Viola e Ombra Viola */
+/* HERO */
 .hero {
-    height: 90vh; display: flex; align-items: center; justify-content: center;
-    background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1545128485-c400e7702796?q=80&w=1920') no-repeat center/cover;
+    height: 85vh; width: 100%; display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1545128485-c400e7702796?q=80&w=1920') no-repeat center/cover;
     position: relative;
-    clip-path: polygon(0 0, 100% 0, 100% 95%, 0 100%);
+    clip-path: polygon(0 0, 100% 0, 100% 98%, 0 100%);
+    padding: 0 20px;
 }
+
+.hero-content {
+    width: 100%;
+    max-width: 1200px;
+    text-align: center;
+}
+
 .main-title { 
-    color: var(--white); /* Mantenuto bianco come in image_2.png */
-    font-size: 12vw; font-weight: 900; letter-spacing: -2px; 
-    text-shadow: 10px 10px 0px var(--accent-purple); /* Ombra viola invece che arancione */
-}
-.subtitle { color: var(--white); letter-spacing: 8px; font-weight: 700; margin-top: 10px; text-transform: uppercase; }
-
-/* BANNER ALERT - Sfondo Viola (image_3.png aggiornato) */
-.locandina-digital { 
-    padding: 100px 5%; background: var(--bg-light); text-align: center; 
-}
-.alert-banner {
-    background: var(--accent-purple); /* Viola invece che azzurro */
-    padding: 50px; border-radius: 40px;
-    box-shadow: 20px 20px 0px var(--black);
-}
-.alert-banner h2 { font-size: 3rem; font-weight: 900; text-transform: uppercase; }
-.red-text { color: var(--black); background: var(--white); display: inline-block; padding: 5px 15px; margin: 20px 0; font-weight: 900; }
-
-/* TICKETS - Ticket Saltacoda Viola (image_4.png aggiornato) */
-.tickets-section { padding: 80px 5%; background: var(--black); color: var(--white); }
-.ticket-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
-.ticket-box {
-    background: var(--white); color: var(--black); padding: 50px 30px; 
-    border-radius: 20px; transition: transform 0.3s;
-}
-.ticket-box:hover { transform: rotate(-2deg) scale(1.05); }
-.ticket-box.highlight { 
-    background: var(--accent-purple); /* Viola invece che arancione */
     color: var(--white); 
+    font-size: 10vw; /* Dimensione dinamica per PC */
+    font-weight: 900; 
+    letter-spacing: -2px; 
+    text-shadow: 6px 6px 0px var(--accent-purple);
+    text-transform: uppercase;
 }
-.price { font-size: 4rem; font-weight: 900; margin: 20px 0; display: block; }
-.ticket-box ul { list-style: none; font-weight: 600; line-height: 2.5; }
 
-/* BOTTONE ACQUISTA - Viola (image_2.png aggiornato) */
+.subtitle { color: var(--white); letter-spacing: 4px; font-weight: 700; margin-top: 10px; text-transform: uppercase; font-size: 1rem; }
+
+/* BOTTONE */
 .btn-primary {
-    display: inline-block; margin-top: 30px; padding: 20px 50px; 
-    background: var(--accent-purple); /* Viola invece che arancione */
-    color: var(--white);
+    display: inline-block; margin-top: 30px; padding: 18px 40px; 
+    background: var(--accent-purple); color: var(--white);
     text-decoration: none; font-weight: 900; border-radius: 50px;
-    box-shadow: 0px 10px 0px var(--accent-dark-purple); /* Ombra viola scuro */
+    box-shadow: 0px 8px 0px var(--accent-dark-purple);
     transition: 0.2s;
+    font-size: 0.9rem;
+    text-transform: uppercase;
 }
-.btn-primary:hover { transform: translateY(5px); box-shadow: 0px 5px 0px var(--accent-dark-purple); }
+
+/* BANNER ALERT */
+.locandina-digital { padding: 60px 5%; background: var(--bg-light); text-align: center; }
+.alert-banner {
+    background: var(--accent-purple); padding: 40px 20px; border-radius: 30px;
+    box-shadow: 15px 15px 0px var(--black);
+    width: 100%;
+}
+.alert-banner h2 { font-size: 2rem; font-weight: 900; text-transform: uppercase; color: var(--black); }
+.red-text { color: var(--black); background: var(--white); display: inline-block; padding: 5px 15px; margin: 15px 0; font-weight: 900; border-radius: 5px; font-size: 0.8rem; }
+
+/* TICKETS */
+.tickets-section { padding: 60px 5%; background: var(--black); color: var(--white); }
+.ticket-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
+.ticket-box {
+    background: var(--white); color: var(--black); padding: 40px 25px; 
+    border-radius: 20px; text-align: center;
+}
+.ticket-box.highlight { background: var(--accent-purple); color: var(--white); }
+.price { font-size: 3.5rem; font-weight: 900; margin: 15px 0; display: block; }
+.ticket-box ul { list-style: none; font-weight: 600; line-height: 2; font-size: 0.9rem; text-align: left; padding-left: 10px; }
 
 /* FAQ */
-.faq-section { padding: 100px 5%; background: var(--bg-light); }
-.sec-title { font-size: 3rem; font-weight: 900; margin-bottom: 40px; }
+.faq-section { padding: 80px 5%; background: var(--bg-light); max-width: 100%; }
+.sec-title { font-size: 2.5rem; font-weight: 900; margin-bottom: 30px; text-transform: uppercase; }
 .accordion-item { border-bottom: 2px solid var(--black); }
 .accordion-header {
-    width: 100%; padding: 30px 0; background: none; border: none;
-    text-align: left; font-size: 1.5rem; font-weight: 900; cursor: pointer;
+    width: 100%; padding: 25px 0; background: none; border: none;
+    text-align: left; font-size: 1.2rem; font-weight: 900; cursor: pointer;
     display: flex; justify-content: space-between; align-items: center;
+    color: var(--accent-purple);
 }
-.accordion-body { padding-bottom: 30px; font-weight: 500; color: var(--gray-text); display: none; }
+.accordion-body { padding-bottom: 25px; font-weight: 500; color: var(--gray-text); display: none; }
 
-footer { background: var(--black); color: var(--white); padding: 40px; text-align: center; font-weight: 700; }
+footer { background: var(--black); color: var(--white); padding: 30px; text-align: center; font-weight: 700; font-size: 0.8rem; }
 
-/* RESPONSIVE */
+/* ---------------------------------------------------
+   VISTA MOBILE (Aggiustamenti specifici per cellulari)
+   --------------------------------------------------- */
 @media (max-width: 768px) {
-    .main-title { font-size: 5rem; }
-    .alert-banner { padding: 30px; }
-    .alert-banner h2 { font-size: 1.8rem; }
+    .main-title { 
+        font-size: 16vw; /* Riduce il titolo per farlo stare in larghezza */
+        letter-spacing: -1px;
+        text-shadow: 4px 4px 0px var(--accent-purple);
+    }
+    
+    .subtitle { 
+        font-size: 0.7rem; 
+        letter-spacing: 2px; 
+    }
+
+    .hero {
+        height: 70vh; /* Accorcia la hero su mobile */
+    }
+
+    .alert-banner h2 { 
+        font-size: 1.4rem; 
+    }
+
+    .btn-primary {
+        padding: 15px 30px;
+        font-size: 0.8rem;
+    }
+
+    .ticket-grid {
+        gap: 20px;
+    }
+    
+    .sec-title {
+        font-size: 1.8rem;
+    }
 }
