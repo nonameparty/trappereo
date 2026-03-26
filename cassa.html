@@ -3,131 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CASSA | TRAPPEREO</title>
+    <title>CASSA BAR | TRAPPEREO</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --purple: #8a2be2; --neon: #bc13fe; }
+        :root { --purple: #8a2be2; --green: #2ecc71; --dark: #000; --light: #f4f4f4; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: #000; color: white; padding: 20px; }
+        body { background: var(--dark); color: white; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        .header-cassa { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid #111; padding-bottom: 15px; }
-        .total-session { font-size: 24px; color: var(--purple); font-weight: 900; }
+        /* HEADER */
+        .header-cassa { height: 80px; background: #111; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; border-bottom: 2px solid var(--purple); }
+        .total-display { font-size: 40px; font-weight: 900; color: white; }
+        
+        /* TASTO PAGA SEPARATO */
+        .toggle-pay { 
+            padding: 15px 30px; border-radius: 50px; border: 2px solid white; 
+            font-weight: 900; cursor: pointer; transition: 0.3s; text-transform: uppercase;
+            background: black; color: white;
+        }
+        .toggle-pay.active { background: var(--green); color: black; border-color: var(--green); box-shadow: 0 0 15px var(--green); }
 
-        h2 { font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: #444; margin-bottom: 15px; }
+        /* MAIN LAYOUT */
+        .main-container { display: flex; flex: 1; overflow: hidden; }
 
-        /* GRID PER IL BAR */
-        .grid-bar { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 40px; }
+        /* SINISTRA: BOTTONI CHIARI */
+        .menu-grid { 
+            flex: 2; background: var(--light); padding: 20px; 
+            display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 120px; gap: 15px;
+            overflow-y: auto;
+        }
         .btn-item { 
-            background: #0e0e0e; border: 2px solid #222; color: white; padding: 25px 10px; 
-            border-radius: 20px; font-weight: 900; font-size: 18px; cursor: pointer; transition: 0.2s;
+            background: white; border: 2px solid #ddd; color: black; border-radius: 20px; 
+            font-weight: 900; font-size: 18px; cursor: pointer; box-shadow: 0 4px 0 #ccc;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-        .btn-item span { font-size: 12px; color: var(--purple); margin-top: 5px; }
-        .btn-item:active { transform: scale(0.95); background: var(--purple); border-color: white; }
+        .btn-item:active { transform: translateY(4px); box-shadow: none; }
+        .btn-item span { color: var(--purple); font-size: 14px; margin-top: 5px; }
 
-        /* GUARDAROBA */
-        .guardaroba-section { background: #0e0e0e; padding: 25px; border-radius: 30px; border: 1px solid #222; }
-        .input-num { width: 100%; background: #000; border: 2px solid #333; color: white; padding: 20px; border-radius: 15px; font-size: 24px; text-align: center; margin-bottom: 15px; font-weight: 900; }
-        .btn-giacca { background: white; color: black; border: none; width: 100%; padding: 20px; border-radius: 15px; font-weight: 900; font-size: 18px; cursor: pointer; }
+        /* DESTRA: RIEPILOGO */
+        .summary-panel { flex: 1; background: #000; display: flex; flex-direction: column; border-left: 2px solid #222; }
+        .summary-header { padding: 20px; font-size: 18px; border-bottom: 1px solid #222; font-weight: 900; color: #555; }
+        .order-list { flex: 1; overflow-y: auto; padding: 10px; }
+        
+        .order-row { 
+            background: #111; margin-bottom: 10px; padding: 15px; border-radius: 15px; 
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .row-info { display: flex; flex-direction: column; }
+        .row-name { font-weight: 900; font-size: 16px; text-transform: uppercase; }
+        .row-controls { display: flex; align-items: center; gap: 15px; }
+        
+        .qty-btn { 
+            width: 35px; height: 35px; border-radius: 10px; border: none; 
+            font-weight: 900; cursor: pointer; font-size: 20px;
+        }
+        .minus { background: #ff4444; color: white; }
+        .plus { background: var(--green); color: black; }
+        .qty-val { font-size: 20px; font-weight: 900; min-width: 25px; text-align: center; }
 
-        /* NOTIFICA VELOCE */
-        #status { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--purple); padding: 10px 30px; border-radius: 50px; display: none; font-weight: 900; }
+        /* FOOTER AZIONI */
+        .summary-footer { padding: 20px; background: #111; border-top: 1px solid #222; }
+        .btn-checkout { width: 100%; padding: 20px; background: var(--purple); border: none; border-radius: 15px; color: white; font-weight: 900; font-size: 20px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div class="header-cassa">
-        <h1 style="font-weight: 900; font-size: 20px;">TRAPPEREO <span style="color:var(--purple)">CASSA</span></h1>
-        <div class="total-session">TOT: <span id="valTot">0</span>€</div>
+    <header class="header-cassa">
+        <div class="total-display">TOT: <span id="finalPrice">0</span>€</div>
+        <button id="sepToggle" class="toggle-pay" onclick="toggleSeparato()">PAGA SEPARATO: OFF</button>
+        <div style="font-weight: 900; color: var(--purple);">TRAPPEREO STAFF</div>
+    </header>
+
+    <div class="main-container">
+        <div class="menu-grid">
+            <button class="btn-item" onclick="addToCart('Drink', 10)">DRINK <span>10€</span></button>
+            <button class="btn-item" onclick="addToCart('Premium', 12)">PREMIUM <span>12€</span></button>
+            <button class="btn-item" onclick="addToCart('Birra', 6)">BIRRA <span>6€</span></button>
+            <button class="btn-item" onclick="addToCart('Analcolico', 6)">ANALCOLICO <span>6€</span></button>
+            <button class="btn-item" onclick="addToCart('RedBull', 8)">RED BULL <span>8€</span></button>
+            <button class="btn-item" onclick="addToCart('Shot', 3)">SHOT <span>3€</span></button>
+            <button class="btn-item" onclick="addToCart('Acqua', 3)">ACQUA <span>3€</span></button>
+        </div>
+
+        <div class="summary-panel">
+            <div class="summary-header">RIEPILOGO ORDINE</div>
+            <div id="orderList" class="order-list">
+                </div>
+            <div class="summary-footer">
+                <button class="btn-checkout" onclick="concludiVendita()">CONCLUDI VENDITA</button>
+            </div>
+        </div>
     </div>
 
-    <section>
-        <h2>🍸 MENU BAR</h2>
-        <div class="grid-bar">
-            <button class="btn-item" onclick="vendi('DRINK', 10)">DRINK <span>10€</span></button>
-            <button class="btn-item" onclick="vendi('PREMIUM', 12)">PREMIUM <span>12€</span></button>
-            <button class="btn-item" onclick="vendi('BIRRA', 6)">BIRRA <span>6€</span></button>
-            <button class="btn-item" onclick="vendi('ANALCOLICO', 6)">ANALCOLICO <span>6€</span></button>
-            <button class="btn-item" onclick="vendi('REDBULL', 8)">RED BULL <span>8€</span></button>
-            <button class="btn-item" onclick="vendi('SHOT', 3)">SHOT <span>3€</span></button>
-            <button class="btn-item" onclick="vendi('ACQUA', 3)">ACQUA <span>3€</span></button>
-        </div>
-    </section>
-
-    <section>
-        <h2>🧥 GUARDAROBA</h2>
-        <div class="guardaroba-section">
-            <input type="number" id="numGiacca" class="input-num" placeholder="N° GRUCCIA">
-            <button class="btn-giacca" onclick="vendiGuardaroba()">INCASSA GIACCA (5€)</button>
-        </div>
-    </section>
-
-    <div id="status">VENDITA REGISTRATA!</div>
-
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
     <script>
+        // Inserisci qui la tua configurazione Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyATKCIfFo6uPwEUTZh00QIVvAJrq1L0Pw8",
-            authDomain: "trappereo-7a89a.firebaseapp.com",
             projectId: "trappereo-7a89a",
-            storageBucket: "trappereo-7a89a.firebasestorage.app",
-            messagingSenderId: "579456256023",
             appId: "1:579456256023:web:56c2f97bbbe82c371b7452"
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-        const auth = firebase.auth();
 
-        let incassoSessione = 0;
+        let carrello = [];
+        let isSeparato = false;
 
-        // Funzione per vendere al Bar
-        function vendi(prodotto, prezzo) {
-            registraVendita({
-                tipo: "BAR",
-                item: prodotto,
-                prezzo: prezzo,
-                orario: new Date()
-            }, prezzo);
+        function toggleSeparato() {
+            isSeparato = !isSeparato;
+            const btn = document.getElementById('sepToggle');
+            if(isSeparato) {
+                btn.innerText = "PAGA SEPARATO: ON";
+                btn.classList.add('active');
+            } else {
+                btn.innerText = "PAGA SEPARATO: OFF";
+                btn.classList.remove('active');
+            }
         }
 
-        // Funzione per il Guardaroba
-        function vendiGuardaroba() {
-            const numero = document.getElementById("numGiacca").value;
-            if(!numero) { alert("Inserisci il numero gruccia!"); return; }
-            
-            registraVendita({
-                tipo: "GUARDAROBA",
-                gruccia: numero,
-                prezzo: 5,
-                orario: new Date()
-            }, 5);
-            document.getElementById("numGiacca").value = "";
+        function addToCart(nome, prezzo) {
+            if (isSeparato) {
+                // Se separato, aggiunge sempre una nuova riga
+                carrello.push({ nome, prezzo, qty: 1, id: Date.now() });
+            } else {
+                // Se normale, raggruppa per nome
+                const esistente = carrello.find(item => item.nome === nome);
+                if (esistente) {
+                    esistente.qty++;
+                } else {
+                    carrello.push({ nome, prezzo, qty: 1 });
+                }
+            }
+            renderCart();
         }
 
-        function registraVendita(dati, prezzo) {
-            const user = auth.currentUser;
-            if(!user) { alert("Devi essere loggato!"); return; }
+        function updateQty(index, delta) {
+            carrello[index].qty += delta;
+            if (carrello[index].qty <= 0) {
+                carrello.splice(index, 1);
+            }
+            renderCart();
+        }
 
-            dati.staffEmail = user.email;
+        function renderCart() {
+            const list = document.getElementById('orderList');
+            const totalDisplay = document.getElementById('finalPrice');
+            list.innerHTML = '';
+            let totale = 0;
 
-            db.collection("vendite").add(dati).then(() => {
-                incassoSessione += prezzo;
-                document.getElementById("valTot").innerText = incassoSessione;
+            carrello.forEach((item, index) => {
+                totale += (item.prezzo * item.qty);
                 
-                // Feedback visivo
-                const s = document.getElementById("status");
-                s.style.display = "block";
-                setTimeout(() => { s.style.display = "none"; }, 1000);
+                const row = document.createElement('div');
+                row.className = 'order-row';
+                
+                // Se separato, non mostriamo i tasti + e - per forzare l'aggiunta singola
+                const controls = isSeparato ? 
+                    `<button class="qty-btn minus" onclick="updateQty(${index}, -1)">×</button>` : 
+                    `<div class="row-controls">
+                        <button class="qty-btn minus" onclick="updateQty(${index}, -1)">-</button>
+                        <span class="qty-val">${item.qty}</span>
+                        <button class="qty-btn plus" onclick="updateQty(${index}, 1)">+</button>
+                    </div>`;
+
+                row.innerHTML = `
+                    <div class="row-info">
+                        <span class="row-name">${item.nome}</span>
+                        <span style="color: #555;">${item.prezzo}€ cadauno</span>
+                    </div>
+                    ${controls}
+                `;
+                list.appendChild(row);
+            });
+
+            totalDisplay.innerText = totale;
+        }
+
+        function concludiVendita() {
+            if (carrello.length === 0) return;
+            
+            db.collection("vendite_bar").add({
+                ordine: carrello,
+                totale: document.getElementById('finalPrice').innerText,
+                data: new Date(),
+                tipoPagamento: isSeparato ? "SEPARATO" : "UNICO"
+            }).then(() => {
+                alert("Vendita registrata!");
+                carrello = [];
+                renderCart();
             });
         }
-
-        // Protezione: se non sei loggato ti rimanda alla home
-        auth.onAuthStateChanged(user => {
-            if (!user) { window.location.href = "index.html"; }
-        });
     </script>
 </body>
 </html>
