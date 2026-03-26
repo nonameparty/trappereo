@@ -3,162 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CASSA BAR | TRAPPEREO</title>
+    <title>CASSA POS | TRAPPEREO</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --purple: #8a2be2; --green: #2ecc71; --dark: #000; --light: #f4f4f4; }
+        :root { --purple: #8a2be2; --green: #2ecc71; --dark: #000; --light: #ffffff; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background: var(--dark); color: white; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
         /* HEADER */
-        .header-cassa { height: 80px; background: #111; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; border-bottom: 2px solid var(--purple); }
-        .total-display { font-size: 40px; font-weight: 900; color: white; }
+        .header-cassa { height: 70px; background: #000; display: flex; justify-content: center; align-items: center; padding: 0 30px; border-bottom: 1px solid #222; }
         
-        /* TASTO PAGA SEPARATO */
         .toggle-pay { 
-            padding: 15px 30px; border-radius: 50px; border: 2px solid white; 
+            padding: 12px 40px; border-radius: 8px; border: 2px solid #333; 
             font-weight: 900; cursor: pointer; transition: 0.3s; text-transform: uppercase;
-            background: black; color: white;
+            background: #000; color: #666; font-size: 14px; letter-spacing: 1px;
         }
-        .toggle-pay.active { background: var(--green); color: black; border-color: var(--green); box-shadow: 0 0 15px var(--green); }
+        .toggle-pay.active { background: var(--green); color: black; border-color: var(--green); box-shadow: 0 0 20px rgba(46, 204, 113, 0.3); }
 
-        /* MAIN LAYOUT */
         .main-container { display: flex; flex: 1; overflow: hidden; }
 
-        /* SINISTRA: BOTTONI CHIARI */
+        /* SINISTRA: MENU CHIARO (VISIBILITÀ MAX) */
         .menu-grid { 
-            flex: 2; background: var(--light); padding: 20px; 
-            display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 120px; gap: 15px;
+            flex: 1.7; background: var(--light); padding: 20px; 
+            display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 130px; gap: 15px;
             overflow-y: auto;
         }
         .btn-item { 
-            background: white; border: 2px solid #ddd; color: black; border-radius: 20px; 
-            font-weight: 900; font-size: 18px; cursor: pointer; box-shadow: 0 4px 0 #ccc;
+            background: white; border: 2px solid #ddd; color: black; border-radius: 15px; 
+            font-weight: 900; font-size: 19px; cursor: pointer; box-shadow: 0 5px 0 #eee;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-        .btn-item:active { transform: translateY(4px); box-shadow: none; }
-        .btn-item span { color: var(--purple); font-size: 14px; margin-top: 5px; }
+        .btn-item:active { transform: translateY(3px); box-shadow: none; }
+        .btn-item span { color: var(--purple); font-size: 15px; margin-top: 5px; }
 
         /* DESTRA: RIEPILOGO */
         .summary-panel { flex: 1; background: #000; display: flex; flex-direction: column; border-left: 2px solid #222; }
-        .summary-header { padding: 20px; font-size: 18px; border-bottom: 1px solid #222; font-weight: 900; color: #555; }
-        .order-list { flex: 1; overflow-y: auto; padding: 10px; }
+        .summary-header { padding: 20px; font-size: 12px; letter-spacing: 2px; border-bottom: 1px solid #111; font-weight: 900; color: #444; text-transform: uppercase; }
+        
+        .order-list { flex: 1; overflow-y: auto; padding: 15px; }
         
         .order-row { 
-            background: #111; margin-bottom: 10px; padding: 15px; border-radius: 15px; 
-            display: flex; justify-content: space-between; align-items: center;
+            background: #0a0a0a; margin-bottom: 8px; padding: 18px; border-radius: 12px; 
+            display: flex; justify-content: space-between; align-items: center; border: 1px solid #1a1a1a;
         }
-        .row-info { display: flex; flex-direction: column; }
-        .row-name { font-weight: 900; font-size: 16px; text-transform: uppercase; }
-        .row-controls { display: flex; align-items: center; gap: 15px; }
+        .row-name { font-weight: 900; font-size: 17px; text-transform: uppercase; color: white; }
+        .row-price { color: var(--purple); font-size: 13px; font-weight: 700; }
         
-        .qty-btn { 
-            width: 35px; height: 35px; border-radius: 10px; border: none; 
-            font-weight: 900; cursor: pointer; font-size: 20px;
-        }
-        .minus { background: #ff4444; color: white; }
-        .plus { background: var(--green); color: black; }
-        .qty-val { font-size: 20px; font-weight: 900; min-width: 25px; text-align: center; }
+        .row-controls { display: flex; align-items: center; gap: 12px; }
+        .qty-btn { width: 35px; height: 35px; border-radius: 8px; border: none; font-weight: 900; cursor: pointer; font-size: 18px; }
+        .minus { background: #1a1a1a; color: #ff4444; }
+        .plus { background: #1a1a1a; color: var(--green); }
+        .qty-val { font-size: 18px; font-weight: 900; min-width: 25px; text-align: center; color: white; }
 
-        /* FOOTER AZIONI */
-        .summary-footer { padding: 20px; background: #111; border-top: 1px solid #222; }
-        .btn-checkout { width: 100%; padding: 20px; background: var(--purple); border: none; border-radius: 15px; color: white; font-weight: 900; font-size: 20px; cursor: pointer; }
+        /* FOOTER CON TOTALE SOTTO */
+        .summary-footer { padding: 20px; background: #050505; border-top: 1px solid #222; }
+        .total-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 0 5px; }
+        .total-label { font-size: 14px; font-weight: 900; color: #666; text-transform: uppercase; }
+        .total-amount { font-size: 38px; font-weight: 900; color: white; }
+
+        .btn-checkout { 
+            width: 100%; padding: 22px; background: var(--purple); border: none; 
+            border-radius: 12px; color: white; font-weight: 900; font-size: 20px; 
+            cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .btn-checkout:active { background: #7022b8; }
     </style>
 </head>
 <body>
 
     <header class="header-cassa">
-        <div class="total-display">TOT: <span id="finalPrice">0</span>€</div>
         <button id="sepToggle" class="toggle-pay" onclick="toggleSeparato()">PAGA SEPARATO: OFF</button>
-        <div style="font-weight: 900; color: var(--purple);">TRAPPEREO STAFF</div>
     </header>
 
     <div class="main-container">
         <div class="menu-grid">
-            <button class="btn-item" onclick="addToCart('Drink', 10)">DRINK <span>10€</span></button>
-            <button class="btn-item" onclick="addToCart('Premium', 12)">PREMIUM <span>12€</span></button>
-            <button class="btn-item" onclick="addToCart('Birra', 6)">BIRRA <span>6€</span></button>
-            <button class="btn-item" onclick="addToCart('Analcolico', 6)">ANALCOLICO <span>6€</span></button>
-            <button class="btn-item" onclick="addToCart('RedBull', 8)">RED BULL <span>8€</span></button>
-            <button class="btn-item" onclick="addToCart('Shot', 3)">SHOT <span>3€</span></button>
-            <button class="btn-item" onclick="addToCart('Acqua', 3)">ACQUA <span>3€</span></button>
+            <button class="btn-item" onclick="addToCart('DRINK', 10)">DRINK <span>10€</span></button>
+            <button class="btn-item" onclick="addToCart('PREMIUM', 12)">PREMIUM <span>12€</span></button>
+            <button class="btn-item" onclick="addToCart('BIRRA', 6)">BIRRA <span>6€</span></button>
+            <button class="btn-item" onclick="addToCart('ANALCOLICO', 6)">ANALCOLICO <span>6€</span></button>
+            <button class="btn-item" onclick="addToCart('REDBULL', 8)">RED BULL <span>8€</span></button>
+            <button class="btn-item" onclick="addToCart('SHOT', 3)">SHOT <span>3€</span></button>
+            <button class="btn-item" onclick="addToCart('ACQUA', 3)">ACQUA <span>3€</span></button>
         </div>
 
         <div class="summary-panel">
-            <div class="summary-header">RIEPILOGO ORDINE</div>
+            <div class="summary-header">Riepilogo Ordine</div>
             <div id="orderList" class="order-list">
                 </div>
+            
             <div class="summary-footer">
-                <button class="btn-checkout" onclick="concludiVendita()">CONCLUDI VENDITA</button>
+                <div class="total-box">
+                    <span class="total-label">Totale da pagare</span>
+                    <span class="total-amount"><span id="finalPrice">0</span>€</span>
+                </div>
+                <button class="btn-checkout" onclick="concludiVendita()">CHIUDI ORDINE</button>
             </div>
         </div>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-
     <script>
-        // Inserisci qui la tua configurazione Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyATKCIfFo6uPwEUTZh00QIVvAJrq1L0Pw8",
-            projectId: "trappereo-7a89a",
-            appId: "1:579456256023:web:56c2f97bbbe82c371b7452"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-
         let carrello = [];
         let isSeparato = false;
 
         function toggleSeparato() {
             isSeparato = !isSeparato;
             const btn = document.getElementById('sepToggle');
-            if(isSeparato) {
-                btn.innerText = "PAGA SEPARATO: ON";
-                btn.classList.add('active');
+            btn.innerText = isSeparato ? "PAGA SEPARATO: ON" : "PAGA SEPARATO: OFF";
+            btn.classList.toggle('active');
+            
+            // Riordina e raggruppa/esplode in automatico
+            reorganizeCart();
+        }
+
+        function reorganizeCart() {
+            if (isSeparato) {
+                // Esplode tutto in righe singole
+                let nuovoCarrello = [];
+                carrello.forEach(item => {
+                    for(let i=0; i < item.qty; i++) {
+                        nuovoCarrello.push({ nome: item.nome, prezzo: item.prezzo, qty: 1 });
+                    }
+                });
+                carrello = nuovoCarrello;
             } else {
-                btn.innerText = "PAGA SEPARATO: OFF";
-                btn.classList.remove('active');
+                // Raggruppa tutto per nome
+                let mappa = {};
+                carrello.forEach(item => {
+                    if (mappa[item.nome]) {
+                        mappa[item.nome].qty += item.qty;
+                    } else {
+                        mappa[item.nome] = { ...item };
+                    }
+                });
+                carrello = Object.values(mappa);
             }
+            renderCart();
         }
 
         function addToCart(nome, prezzo) {
             if (isSeparato) {
-                // Se separato, aggiunge sempre una nuova riga
-                carrello.push({ nome, prezzo, qty: 1, id: Date.now() });
+                carrello.push({ nome, prezzo, qty: 1 });
             } else {
-                // Se normale, raggruppa per nome
-                const esistente = carrello.find(item => item.nome === nome);
-                if (esistente) {
-                    esistente.qty++;
-                } else {
-                    carrello.push({ nome, prezzo, qty: 1 });
-                }
+                const esistente = carrello.find(i => i.nome === nome);
+                if (esistente) { esistente.qty++; } 
+                else { carrello.push({ nome, prezzo, qty: 1 }); }
             }
             renderCart();
         }
 
         function updateQty(index, delta) {
             carrello[index].qty += delta;
-            if (carrello[index].qty <= 0) {
-                carrello.splice(index, 1);
-            }
+            if (carrello[index].qty <= 0) carrello.splice(index, 1);
             renderCart();
         }
 
         function renderCart() {
             const list = document.getElementById('orderList');
             const totalDisplay = document.getElementById('finalPrice');
+            
+            // Sempre in ordine alfabetico
+            carrello.sort((a, b) => a.nome.localeCompare(b.nome));
+
             list.innerHTML = '';
             let totale = 0;
 
             carrello.forEach((item, index) => {
                 totale += (item.prezzo * item.qty);
-                
                 const row = document.createElement('div');
                 row.className = 'order-row';
                 
-                // Se separato, non mostriamo i tasti + e - per forzare l'aggiunta singola
+                // Se separato metto la X, se unico metto + -
                 const controls = isSeparato ? 
                     `<button class="qty-btn minus" onclick="updateQty(${index}, -1)">×</button>` : 
                     `<div class="row-controls">
@@ -168,31 +182,23 @@
                     </div>`;
 
                 row.innerHTML = `
-                    <div class="row-info">
-                        <span class="row-name">${item.nome}</span>
-                        <span style="color: #555;">${item.prezzo}€ cadauno</span>
+                    <div>
+                        <div class="row-name">${item.nome}</div>
+                        <div class="row-price">${item.prezzo}€</div>
                     </div>
                     ${controls}
                 `;
                 list.appendChild(row);
             });
-
             totalDisplay.innerText = totale;
         }
 
         function concludiVendita() {
             if (carrello.length === 0) return;
-            
-            db.collection("vendite_bar").add({
-                ordine: carrello,
-                totale: document.getElementById('finalPrice').innerText,
-                data: new Date(),
-                tipoPagamento: isSeparato ? "SEPARATO" : "UNICO"
-            }).then(() => {
-                alert("Vendita registrata!");
-                carrello = [];
-                renderCart();
-            });
+            // Qui puoi aggiungere il salvataggio su Firebase come abbiamo visto prima
+            alert("VENDITA EFFETTUATA!\nTotale: " + document.getElementById('finalPrice').innerText + "€");
+            carrello = [];
+            renderCart();
         }
     </script>
 </body>
