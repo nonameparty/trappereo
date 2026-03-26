@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TRAPPEREO | BIELLA</title>
+    <title id="db-siteTitle">TRAPPEREO | BIELLA</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -13,14 +13,13 @@
         <div class="modal-content">
             <span class="close-modal">&times;</span>
             <h2 id="modalTitle">PANNELLO ADMIN</h2>
-            <p id="modalSub">Accesso riservato TRAPPEREO</p>
-            
             <form id="authForm">
+                <input type="text" id="regNome" placeholder="NOME" required>
+                <input type="text" id="regCognome" placeholder="COGNOME" required>
                 <input type="email" id="email" placeholder="EMAIL" required>
                 <input type="password" id="password" placeholder="PASSWORD" required>
-                
                 <div class="auth-buttons-row">
-                    <button type="button" id="btnSignUp" class="btn-auth-viola">REGISTRATI</button>
+                    <button type="button" id="btnSignUp" class="btn-auth-viola">REGISTRA UTENTE</button>
                     <button type="button" id="btnSignIn" class="btn-auth-outline">ACCEDI</button>
                 </div>
             </form>
@@ -28,91 +27,76 @@
     </div>
 
     <nav class="navbar">
-        <div class="nav-logo">TRAPPEREO</div>
+        <div id="db-navLogo" class="nav-logo">...</div>
         <div class="nav-links">
-            <a href="#faq">INFO</a>
-            <a href="https://instagram.com" target="_blank">IG</a>
+            <a href="#faq" id="db-navInfo">INFO</a>
+            <a id="db-igLink" href="#" target="_blank">IG</a>
         </div>
     </nav>
 
     <header class="hero">
         <div class="hero-overlay"></div>
         <div class="hero-content">
-            <h1 class="main-title">TRAPPEREO</h1>
-            <p class="subtitle">BIELLA • IL DEVASTO • PROSSIMAMENTE</p>
-            <a href="#tickets" id="mainBuyBtn" class="btn-primary">ACQUISTA BIGLIETTI</a>
+            <h1 id="db-titoloHero" class="main-title">...</h1>
+            <p id="db-sottotitolo" class="subtitle">...</p>
+            <a href="#tickets" id="db-btnHero" class="btn-primary">...</a>
         </div>
     </header>
 
     <section class="locandina-digital">
         <div class="alert-banner">
-            <h2>⚡ IL DEVASTO - PROSSIMAMENTE ⚡</h2>
-            <p class="red-text">🔥 INGRESSO 16+ CON DOCUMENTO CARTACEO 🔥</p>
-            <p>⚠️ EVENTO PRIVATO - ACCREDITO ONLINE OBBLIGATORIO ⚠️</p>
-            <small>(Nessuna vendita in cassa - Fino ad esaurimento posti)</small>
+            <h2 id="db-alertTitolo">...</h2>
+            <p id="db-alertRosso" class="red-text">...</p>
+            <p id="db-alertAvviso">...</p>
+            <small id="db-alertSmall">...</small>
         </div>
     </section>
 
     <section id="tickets" class="tickets-section">
         <div class="ticket-grid">
             <div class="ticket-box">
-                <h3>STANDARD</h3>
-                <span class="price">15€</span>
-                <ul>
-                    <li>Ingresso Garantito</li>
-                    <li>1 Drink Incluso *</li>
-                </ul>
+                <h3 id="db-t1-nome">...</h3>
+                <span id="db-t1-prezzo" class="price">...</span>
+                <p id="db-t1-desc">...</p>
             </div>
             <div class="ticket-box highlight">
-                <h3>SALTACODA ⚡</h3>
-                <span class="price">20€</span>
-                <ul>
-                    <li>Ingresso Prioritario</li>
-                    <li>1 Drink Incluso *</li>
-                    <li>Cambio Nome Incluso</li>
-                </ul>
+                <h3 id="db-t2-nome">...</h3>
+                <span id="db-t2-prezzo" class="price">...</span>
+                <p id="db-t2-desc">...</p>
             </div>
             <div class="ticket-box">
-                <h3>TICKET VIP 👑</h3>
-                <span class="price">29€</span>
-                <ul>
-                    <li>Ingresso Prioritario</li>
-                    <li>Area Riservata</li>
-                    <li><strong>3 DRINK INCLUSI *</strong></li>
-                    <li>Guardaroba Omaggio</li>
-                </ul>
+                <h3 id="db-t3-nome">...</h3>
+                <span id="db-t3-prezzo" class="price">...</span>
+                <p id="db-t3-desc">...</p>
             </div>
         </div>
-        <p class="disclaimer">* Alcolici solo 18+. Analcolici/Energy Drink per under 18.</p>
+        <p id="db-disclaimer" class="disclaimer">...</p>
     </section>
 
     <section id="faq" class="faq-section">
-        <h2 class="sec-title">DOMANDE FREQUENTI</h2>
+        <h2 id="db-faqTitolo" class="sec-title">...</h2>
         <div class="accordion">
             <div class="accordion-item">
-                <button class="accordion-header">Età minima? <span>+</span></button>
-                <div class="accordion-body">Ingresso dai 16 anni compiuti con documento d'identità ORIGINALE e CARTACEO. No foto sul telefono.</div>
+                <button class="accordion-header"><span id="db-q1">...</span> <span>+</span></button>
+                <div class="accordion-body" id="db-a1">...</div>
             </div>
             <div class="accordion-item">
-                <button class="accordion-header">Posso acquistare in cassa? <span>+</span></button>
-                <div class="accordion-body">No. TRAPPEREO è un evento privato. L'ingresso è consentito solo tramite accredito/prevendita online fino a esaurimento posti.</div>
-            </div>
-            <div class="accordion-item">
-                <button class="accordion-header">Quanto costa il cambio nome? <span>+</span></button>
-                <div class="accordion-body">Il cambio nome costa €3,99. È GRATUITO per i possessori di ticket Saltacoda o VIP.</div>
+                <button class="accordion-header"><span id="db-q2">...</span> <span>+</span></button>
+                <div class="accordion-body" id="db-a2">...</div>
             </div>
         </div>
     </section>
 
     <footer>
-        <p>&copy; TRAPPEREO BIELLA - All Rights Reserved</p>
+        <p id="db-footerText">...</p>
     </footer>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
     <script>
-        // 1. CONFIGURAZIONE FIREBASE
+        // CONFIGURAZIONE FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyATKCIfFo6uPwEUTZh00QIVvAJrq1L0Pw8",
             authDomain: "trappereo-7a89a.firebaseapp.com",
@@ -123,66 +107,102 @@
             measurementId: "G-2E1F3EY50H"
         };
         firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
-        // 2. PAROLA CHIAVE PER SBLOCCARE IL TUO PC (Inseriscila una volta sola)
-        const MASTER_KEY = "BOSS_TRAPPEREO_2024"; 
+        // --- FUNZIONE SINCRONIZZAZIONE TOTALE ---
+        function sincronizzaTutto() {
+            const docRef = db.collection("config").doc("testi");
 
-        const modal = document.getElementById("authModal");
-        const authBtnMain = document.getElementById("mainBuyBtn");
-
-        // GESTIONE ACCESSO ULTRA-PRIVATO
-        authBtnMain.addEventListener("click", (e) => {
-            e.preventDefault();
-            
-            // Verifica se questo browser ha già il permesso salvato
-            if (localStorage.getItem("trappereo_admin") === "true") {
-                modal.style.display = "flex";
-            } else {
-                // Se non ha il permesso, prova a chiedere la chiave
-                const input = prompt("Accesso protetto. Inserisci codice sblocco:");
-                
-                if (input === MASTER_KEY) {
-                    localStorage.setItem("trappereo_admin", "true");
-                    alert("PC Autorizzato. Accesso Admin sbloccato.");
-                    modal.style.display = "flex";
+            docRef.onSnapshot((doc) => {
+                if (doc.exists) {
+                    const d = doc.data();
+                    // Associa ogni ID del sito a un campo su Firebase
+                    const mapping = {
+                        "db-siteTitle": d.siteTitle,
+                        "db-navLogo": d.navLogo,
+                        "db-navInfo": d.navInfo,
+                        "db-titoloHero": d.titoloHero,
+                        "db-sottotitolo": d.sottotitolo,
+                        "db-btnHero": d.btnHero,
+                        "db-alertTitolo": d.alertTitolo,
+                        "db-alertRosso": d.alertRosso,
+                        "db-alertAvviso": d.alertAvviso,
+                        "db-alertSmall": d.alertSmall,
+                        "db-t1-nome": d.t1_nome, "db-t1-prezzo": d.t1_prezzo, "db-t1-desc": d.t1_desc,
+                        "db-t2-nome": d.t2_nome, "db-t2-prezzo": d.t2_prezzo, "db-t2-desc": d.t2_desc,
+                        "db-t3-nome": d.t3_nome, "db-t3-prezzo": d.t3_prezzo, "db-t3-desc": d.t3_desc,
+                        "db-disclaimer": d.disclaimer,
+                        "db-faqTitolo": d.faqTitolo,
+                        "db-q1": d.q1, "db-a1": d.a1,
+                        "db-q2": d.q2, "db-a2": d.a2,
+                        "db-footerText": d.footerText
+                    };
+                    for (let id in mapping) {
+                        let el = document.getElementById(id);
+                        if (el && mapping[id]) el.innerText = mapping[id];
+                    }
+                    if(d.igLink) document.getElementById("db-igLink").href = d.igLink;
                 } else {
-                    alert("Le prevendite ufficiali non sono ancora aperte. Segui @trappereo su IG per il drop.");
+                    // SE IL DATABASE È VUOTO, LO CREA AUTOMATICAMENTE
+                    docRef.set({
+                        siteTitle: "TRAPPEREO | BIELLA",
+                        navLogo: "TRAPPEREO",
+                        navInfo: "INFO",
+                        igLink: "https://instagram.com/tuoprofilo",
+                        titoloHero: "TRAPPEREO",
+                        sottotitolo: "BIELLA • IL DEVASTO",
+                        btnHero: "ACQUISTA BIGLIETTI",
+                        alertTitolo: "⚡ PROSSIMAMENTE ⚡",
+                        alertRosso: "🔥 INGRESSO 16+ 🔥",
+                        alertAvviso: "⚠️ ACCREDITO ONLINE OBBLIGATORIO ⚠️",
+                        alertSmall: "(Nessuna vendita in cassa)",
+                        t1_nome: "STANDARD", t1_prezzo: "15€", t1_desc: "Ingresso + 1 Drink",
+                        t2_nome: "SALTACODA ⚡", t2_prezzo: "20€", t2_desc: "Priorità + 1 Drink",
+                        t3_nome: "VIP 👑", t3_prezzo: "29€", t3_desc: "Area riservata + 3 Drink",
+                        disclaimer: "* Alcolici solo 18+.",
+                        faqTitolo: "DOMANDE FREQUENTI",
+                        q1: "Età minima?", a1: "Ingresso dai 16 anni con documento originale.",
+                        q2: "Posso pagare all'ingresso?", a2: "No, evento solo su accredito online.",
+                        footerText: "© TRAPPEREO BIELLA - Tutti i diritti riservati"
+                    });
                 }
+            });
+        }
+        sincronizzaTutto();
+
+        // --- LOGICA MODALE ADMIN (⌥ + Shift + A) ---
+        const modal = document.getElementById("authModal");
+        window.addEventListener("keydown", (e) => {
+            if (e.altKey && e.shiftKey && e.code === 'KeyA') modal.style.display = "flex";
+        });
+
+        document.getElementById("btnSignUp").onclick = () => {
+            const n = document.getElementById("regNome").value;
+            const c = document.getElementById("regCognome").value;
+            const em = document.getElementById("email").value;
+            const ps = document.getElementById("password").value;
+            
+            firebase.auth().createUserWithEmailAndPassword(em, ps).then((u) => {
+                return db.collection("iscritti").doc(u.user.uid).set({
+                    nome: n, cognome: c, email: em, data: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            }).then(() => { 
+                alert("Utente registrato nel Database!"); 
+                modal.style.display = "none";
+                document.getElementById("authForm").reset();
+            }).catch(err => alert("Errore: " + err.message));
+        };
+
+        // ACCORDION FAQ
+        document.querySelectorAll('.accordion-header').forEach(b => {
+            b.onclick = () => {
+                const body = b.nextElementSibling;
+                body.style.display = body.style.display === 'block' ? 'none' : 'block';
             }
         });
 
-        // 3. LOGICA BOTTONI FIREBASE (REGISTRATI / ACCEDI)
-        document.getElementById("btnSignUp").onclick = () => {
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
-            firebase.auth().createUserWithEmailAndPassword(email, password)
-                .then(() => { alert("Account CREATO con successo!"); modal.style.display = "none"; })
-                .catch(err => alert("Errore: " + err.message));
-        };
-
-        document.getElementById("btnSignIn").onclick = () => {
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
-            firebase.auth().signInWithEmailAndPassword(email, password)
-                .then(() => { alert("Accesso ADMIN eseguito!"); modal.style.display = "none"; })
-                .catch(err => alert("Errore: " + err.message));
-        };
-
-        // 4. FISARMONICA FAQ
-        document.querySelectorAll('.accordion-header').forEach(button => {
-            button.addEventListener('click', () => {
-                const body = button.nextElementSibling;
-                button.classList.toggle('active');
-                body.style.display = body.style.display === 'block' ? 'none' : 'block';
-            });
-        });
-
         document.querySelector(".close-modal").onclick = () => modal.style.display = "none";
-        
-        // Chiude il modale se clicchi fuori
-        window.onclick = (event) => {
-            if (event.target == modal) { modal.style.display = "none"; }
-        }
+        window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; }
     </script>
 </body>
 </html>
