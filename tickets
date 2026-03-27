@@ -1,7 +1,11 @@
 async function syncWithN8n() {
     try {
-        const response = await fetch(N8N_URL);
-        const rows = await response.json(); // n8n manda l'array di righe da Google Sheets
+        // MODIFICA QUI: Puntiamo direttamente al file che n8n carica su GitHub
+        const response = await fetch('/dati-ticket.json'); 
+        
+        if (!response.ok) throw new Error("File dati non trovato");
+        
+        const rows = await response.json(); 
 
         const list = document.getElementById('ticket-list');
         const flashContainer = document.getElementById('flash-sale-container');
@@ -9,13 +13,15 @@ async function syncWithN8n() {
         list.innerHTML = '';
         flashContainer.innerHTML = '';
 
-        // Prendi le info Flash Sale dalla prima riga del foglio
+        // Se il file è vuoto o non ci sono righe, esci
+        if (!rows || rows.length === 0) return;
+
+        // Banner Flash Sale (rimane uguale)
         if (rows[0].flashSaleAttivo === "TRUE" || rows[0].flashSaleAttivo === true) {
             flashContainer.innerHTML = `<div class="flash-banner">${rows[0].flashSaleMsg}</div>`;
         }
 
         rows.forEach(t => {
-            // Converte in numero e controlla se i posti sono finiti
             const disp = parseInt(t.postiDisponibili);
             const isSoldOut = disp <= 0;
             const isPremium = t.premium === "TRUE" || t.premium === true;
@@ -40,6 +46,6 @@ async function syncWithN8n() {
         });
 
     } catch (e) {
-        console.error("Errore sincronizzazione Sheets:", e);
+        console.error("Errore nel caricamento ticket da GitHub:", e);
     }
 }
