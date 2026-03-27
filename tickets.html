@@ -1,64 +1,81 @@
-// Configurazione: ora puntiamo al file locale caricato da n8n
-async function syncWithN8n() {
-    try {
-        // Fetch del file JSON che n8n deposita su GitHub
-        const response = await fetch('/dati-ticket.json'); 
-        
-        if (!response.ok) {
-            throw new Error("Il file dati-ticket.json non è ancora pronto su GitHub/Vercel");
-        }
-        
-        const rows = await response.json(); 
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tickets - Trappereo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-        const list = document.getElementById('ticket-list');
-        const flashContainer = document.getElementById('flash-sale-container');
-        
-        // Pulizia iniziale
-        list.innerHTML = '';
-        flashContainer.innerHTML = '';
+    <div id="flash-sale-container"></div>
+    
+    <div class="container">
+        <h1>Scegli il tuo Ticket</h1>
+        <div id="ticket-list">
+            <p style="color:white; text-align:center;">Caricamento in corso...</p>
+        </div>
+    </div>
 
-        if (!rows || rows.length === 0) return;
+    <script>
+    async function syncWithN8n() {
+        try {
+            // Leggiamo il file creato da n8n
+            const response = await fetch('/dati-ticket.json'); 
+            if (!response.ok) throw new Error("Dati non trovati");
+            
+            const rows = await response.json(); 
+            const list = document.getElementById('ticket-list');
+            const flashContainer = document.getElementById('flash-sale-container');
+            
+            list.innerHTML = '';
+            flashContainer.innerHTML = '';
 
-        // 1. Gestione Banner Flash Sale
-        const firstRow = rows[0];
-        if (firstRow.flashSaleAttivo === "TRUE" || firstRow.flashSaleAttivo === true) {
-            flashContainer.innerHTML = `
-                <div class="flash-banner">
-                    ${firstRow.flashSaleMsg || 'OFFERTA SPECIALE ATTIVA!'}
-                </div>`;
-        }
+            if (!rows || rows.length === 0) return;
 
-        // 2. Generazione Lista Ticket
-        rows.forEach(t => {
-            const disp = parseInt(t.postiDisponibili) || 0;
-            const isSoldOut = disp <= 0;
-            const isPremium = t.premium === "TRUE" || t.premium === true;
-            const prezzoDisplay = t.prezzo ? t.prezzo + '.00€' : '---';
+            // Banner Flash Sale
+            if (rows[0].flashSaleAttivo === "TRUE" || rows[0].flashSaleAttivo === true) {
+                flashContainer.innerHTML = `<div class="flash-banner">${rows[0].flashSaleMsg}</div>`;
+            }
 
-            const html = `
-                <div class="ticket-row ${isPremium ? 'vip-special' : ''} ${isSoldOut ? 'sold-out' : ''}" 
-                     onclick="${isSoldOut ? '' : `startCheckout('${t.id}', ${t.prezzo})`}">
-                    <div class="ticket-info">
-                        <span class="ticket-tag ${isPremium ? 'vip' : ''} ${isSoldOut ? 'sold-out-badge' : ''}">
-                            ${isSoldOut ? 'SOLD OUT' : (t.tag || 'TICKET')}
-                        </span>
-                        <h3>${t.nome || 'Ticket'}</h3>
-                        <p>${t.descrizione || ''}</p>
+            // Lista Ticket
+            rows.forEach(t => {
+                const disp = parseInt(t.postiDisponibili) || 0;
+                const isSoldOut = disp <= 0;
+                const isPremium = t.premium === "TRUE" || t.premium === true;
+
+                const html = `
+                    <div class="ticket-row ${isPremium ? 'vip-special' : ''} ${isSoldOut ? 'sold-out' : ''}" 
+                         onclick="${isSoldOut ? '' : `startCheckout('${t.id}', ${t.prezzo})`}">
+                        <div class="ticket-info">
+                            <span class="ticket-tag ${isPremium ? 'vip' : ''} ${isSoldOut ? 'sold-out-badge' : ''}">
+                                ${isSoldOut ? 'SOLD OUT' : (t.tag || 'TICKET')}
+                            </span>
+                            <h3>${t.nome}</h3>
+                            <p>${t.descrizione}</p>
+                        </div>
+                        <div class="ticket-price">
+                            <span>${isSoldOut ? '---' : t.prezzo + '.00€'}</span>
+                            <i class="arrow-icon">${isSoldOut ? '✖' : '→'}</i>
+                        </div>
                     </div>
-                    <div class="ticket-price">
-                        <span>${isSoldOut ? '---' : prezzoDisplay}</span>
-                        <i class="arrow-icon">${isSoldOut ? '✖' : '→'}</i>
-                    </div>
-                </div>
-            `;
-            list.innerHTML += html;
-        });
+                `;
+                list.innerHTML += html;
+            });
 
-    } catch (e) {
-        console.error("Errore caricamento dati:", e);
-        document.getElementById('ticket-list').innerHTML = '<p style="color:white; text-align:center;">Caricamento ticket in corso... aggiorna tra un istante.</p>';
+        } catch (e) {
+            console.error("Errore:", e);
+            document.getElementById('ticket-list').innerHTML = '<p style="color:white;">Errore nel caricamento dei ticket.</p>';
+        }
     }
-}
 
-// FONDAMENTALE: Avvia la funzione al caricamento della pagina
-window.onload = syncWithN8n;
+    // Avvio automatico
+    window.onload = syncWithN8n;
+
+    function startCheckout(id, prezzo) {
+        alert("Hai selezionato il ticket: " + id + " da " + prezzo + "€");
+        // Qui poi metterai il link a Stripe o alla cassa
+    }
+    </script>
+</body>
+</html>
