@@ -1,0 +1,45 @@
+async function syncWithN8n() {
+    try {
+        const response = await fetch(N8N_URL);
+        const rows = await response.json(); // n8n manda l'array di righe da Google Sheets
+
+        const list = document.getElementById('ticket-list');
+        const flashContainer = document.getElementById('flash-sale-container');
+        
+        list.innerHTML = '';
+        flashContainer.innerHTML = '';
+
+        // Prendi le info Flash Sale dalla prima riga del foglio
+        if (rows[0].flashSaleAttivo === "TRUE" || rows[0].flashSaleAttivo === true) {
+            flashContainer.innerHTML = `<div class="flash-banner">${rows[0].flashSaleMsg}</div>`;
+        }
+
+        rows.forEach(t => {
+            // Converte in numero e controlla se i posti sono finiti
+            const disp = parseInt(t.postiDisponibili);
+            const isSoldOut = disp <= 0;
+            const isPremium = t.premium === "TRUE" || t.premium === true;
+
+            const html = `
+                <div class="ticket-row ${isPremium ? 'vip-special' : ''} ${isSoldOut ? 'sold-out' : ''}" 
+                     onclick="${isSoldOut ? '' : `startCheckout('${t.id}', ${t.prezzo})`}">
+                    <div class="ticket-info">
+                        <span class="ticket-tag ${isPremium ? 'vip' : ''} ${isSoldOut ? 'sold-out-badge' : ''}">
+                            ${isSoldOut ? 'SOLD OUT' : t.tag}
+                        </span>
+                        <h3>${t.nome}</h3>
+                        <p>${t.descrizione}</p>
+                    </div>
+                    <div class="ticket-price">
+                        <span>${isSoldOut ? '---' : t.prezzo + '.00€'}</span>
+                        <i class="arrow-icon">${isSoldOut ? '✖' : '→'}</i>
+                    </div>
+                </div>
+            `;
+            list.innerHTML += html;
+        });
+
+    } catch (e) {
+        console.error("Errore sincronizzazione Sheets:", e);
+    }
+}
