@@ -1,43 +1,52 @@
+// Configurazione: ora puntiamo al file locale caricato da n8n
 async function syncWithN8n() {
     try {
-        // MODIFICA QUI: Puntiamo direttamente al file che n8n carica su GitHub
+        // Fetch del file JSON che n8n deposita su GitHub
         const response = await fetch('/dati-ticket.json'); 
         
-        if (!response.ok) throw new Error("File dati non trovato");
+        if (!response.ok) {
+            throw new Error("Il file dati-ticket.json non è ancora pronto su GitHub/Vercel");
+        }
         
         const rows = await response.json(); 
 
         const list = document.getElementById('ticket-list');
         const flashContainer = document.getElementById('flash-sale-container');
         
+        // Pulizia iniziale
         list.innerHTML = '';
         flashContainer.innerHTML = '';
 
-        // Se il file è vuoto o non ci sono righe, esci
         if (!rows || rows.length === 0) return;
 
-        // Banner Flash Sale (rimane uguale)
-        if (rows[0].flashSaleAttivo === "TRUE" || rows[0].flashSaleAttivo === true) {
-            flashContainer.innerHTML = `<div class="flash-banner">${rows[0].flashSaleMsg}</div>`;
+        // 1. Gestione Banner Flash Sale
+        const firstRow = rows[0];
+        if (firstRow.flashSaleAttivo === "TRUE" || firstRow.flashSaleAttivo === true) {
+            flashContainer.innerHTML = `
+                <div class="flash-banner">
+                    ${firstRow.flashSaleMsg || 'OFFERTA SPECIALE ATTIVA!'}
+                </div>`;
         }
 
+        // 2. Generazione Lista Ticket
         rows.forEach(t => {
-            const disp = parseInt(t.postiDisponibili);
+            const disp = parseInt(t.postiDisponibili) || 0;
             const isSoldOut = disp <= 0;
             const isPremium = t.premium === "TRUE" || t.premium === true;
+            const prezzoDisplay = t.prezzo ? t.prezzo + '.00€' : '---';
 
             const html = `
                 <div class="ticket-row ${isPremium ? 'vip-special' : ''} ${isSoldOut ? 'sold-out' : ''}" 
                      onclick="${isSoldOut ? '' : `startCheckout('${t.id}', ${t.prezzo})`}">
                     <div class="ticket-info">
                         <span class="ticket-tag ${isPremium ? 'vip' : ''} ${isSoldOut ? 'sold-out-badge' : ''}">
-                            ${isSoldOut ? 'SOLD OUT' : t.tag}
+                            ${isSoldOut ? 'SOLD OUT' : (t.tag || 'TICKET')}
                         </span>
-                        <h3>${t.nome}</h3>
-                        <p>${t.descrizione}</p>
+                        <h3>${t.nome || 'Ticket'}</h3>
+                        <p>${t.descrizione || ''}</p>
                     </div>
                     <div class="ticket-price">
-                        <span>${isSoldOut ? '---' : t.prezzo + '.00€'}</span>
+                        <span>${isSoldOut ? '---' : prezzoDisplay}</span>
                         <i class="arrow-icon">${isSoldOut ? '✖' : '→'}</i>
                     </div>
                 </div>
@@ -46,6 +55,10 @@ async function syncWithN8n() {
         });
 
     } catch (e) {
-        console.error("Errore nel caricamento ticket da GitHub:", e);
+        console.error("Errore caricamento dati:", e);
+        document.getElementById('ticket-list').innerHTML = '<p style="color:white; text-align:center;">Caricamento ticket in corso... aggiorna tra un istante.</p>';
     }
 }
+
+// FONDAMENTALE: Avvia la funzione al caricamento della pagina
+window.onload = syncWithN8n;
