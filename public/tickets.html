@@ -6,117 +6,110 @@
     <title>TICKETS | TRAPPEREO</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --purple: #8a2be2; --dark: #0e0e0e; }
+        :root { --purple: #8a2be2; --green: #2ecc71; --dark-card: #121212; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: #000; color: white; text-align: center; min-height: 100vh; }
-        
-        .navbar { padding: 20px 5%; border-bottom: 1px solid #111; display: flex; justify-content: space-between; align-items: center; background: #000; position: sticky; top: 0; z-index: 100; }
-        .nav-logo { font-weight: 900; letter-spacing: 2px; text-decoration: none; color: white; font-size: 1.2rem; }
-        .nav-back { color: #555; text-decoration: none; font-weight: 700; font-size: 0.9rem; transition: 0.3s; }
-        .nav-back:hover { color: var(--purple); }
+        body { background: #000; color: white; line-height: 1.6; }
 
-        .container { padding: 40px 5%; max-width: 1200px; margin: 0 auto; }
-        #event-title { font-size: clamp(24px, 5vw, 40px); font-weight: 900; text-transform: uppercase; margin-bottom: 40px; letter-spacing: -1px; }
+        .navbar { padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222; background: #000; position: sticky; top: 0; z-index: 100; }
+        .nav-logo { font-weight: 900; letter-spacing: 2px; text-decoration: none; color: white; }
+        
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+        .header { text-align: left; margin-bottom: 40px; }
+        .header h1 { font-size: 42px; font-weight: 900; letter-spacing: -1px; }
+        .header p { color: #666; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
 
         /* GRID DEI TICKETS */
-        #ticket-box { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
-            gap: 25px; 
-            justify-content: center;
+        .tickets-list { display: flex; flex-direction: column; gap: 20px; }
+
+        .ticket-card { 
+            background: var(--dark-card); 
+            border: 1px solid #222; 
+            border-radius: 20px; 
+            padding: 30px; 
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: center;
+            transition: 0.3s;
         }
+        .ticket-card:hover { border-color: var(--purple); background: #181818; }
 
-        .card { 
-            background: var(--dark); 
-            border: 2px solid #222; 
-            padding: 40px; 
-            border-radius: 35px; 
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            display: flex; 
-            flex-direction: column; 
-            text-align: center;
-            position: relative;
+        .ticket-info h3 { font-size: 22px; font-weight: 900; margin-bottom: 5px; text-transform: uppercase; }
+        .ticket-info p { color: #888; font-size: 14px; margin-bottom: 15px; }
+        
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 50px; font-size: 10px; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; }
+        .badge-exclusive { background: rgba(138, 43, 226, 0.2); color: var(--purple); border: 1fr solid var(--purple); }
+        .badge-promo { background: rgba(46, 204, 113, 0.2); color: var(--green); }
+
+        .ticket-buy { text-align: right; }
+        .price { font-size: 32px; font-weight: 900; display: block; margin-bottom: 10px; }
+        
+        .btn-buy { 
+            background: white; color: black; padding: 12px 25px; border-radius: 12px; 
+            text-decoration: none; font-weight: 900; font-size: 14px; transition: 0.3s;
+            display: inline-block;
         }
-        .card:hover { transform: translateY(-10px); border-color: var(--purple); }
-        .card.premium { border-color: var(--purple); box-shadow: 0 10px 40px rgba(138, 43, 226, 0.15); }
+        .btn-buy:hover { background: var(--purple); color: white; }
+        .btn-soldout { background: #222; color: #555; cursor: not-allowed; }
 
-        .tag { background: var(--purple); color: white; padding: 6px 15px; border-radius: 50px; font-size: 11px; font-weight: 900; text-transform: uppercase; margin-bottom: 20px; align-self: center; }
-        .price { font-size: 55px; font-weight: 900; margin: 15px 0; letter-spacing: -2px; }
-        .desc { color: #888; font-size: 15px; margin-bottom: 30px; line-height: 1.6; flex-grow: 1; }
-        .info { font-size: 12px; color: #444; margin-bottom: 20px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .availability { font-size: 11px; font-weight: 700; color: #444; margin-top: 8px; text-transform: uppercase; }
 
-        .btn { 
-            display: block; 
-            background: #fff; 
-            color: #000; 
-            padding: 18px; 
-            border-radius: 18px; 
-            text-decoration: none; 
-            font-weight: 900; 
-            text-transform: uppercase; 
-            transition: 0.3s; 
-            border: none;
+        @media (max-width: 600px) {
+            .ticket-card { grid-template-columns: 1fr; gap: 20px; text-align: left; }
+            .ticket-buy { text-align: left; }
         }
-        .btn:hover { background: var(--purple); color: #fff; }
-        .btn.disabled { background: #222; color: #555; cursor: not-allowed; }
-
-        @media (max-width: 480px) { .container { padding: 20px; } .card { padding: 30px; } }
     </style>
 </head>
 <body>
 
     <nav class="navbar">
         <a href="/" class="nav-logo">TRAPPEREO</a>
-        <a href="/" class="nav-back">← HOME</a>
+        <a href="/" style="color:#555; text-decoration:none; font-size:12px; font-weight:700;">← TORNA INDIETRO</a>
     </nav>
 
     <div class="container">
-        <h1 id="event-title">SINCRONIZZAZIONE...</h1>
-        <div id="ticket-box">
-            </div>
+        <div class="header">
+            <h1>Biglietti</h1>
+            <p>Seleziona la quantità e vai al pagamento</p>
+        </div>
+
+        <div id="tickets-list" class="tickets-list">
+            <p style="color:#333">Sincronizzazione in corso...</p>
+        </div>
     </div>
 
     <script>
         async function loadTickets() {
             try {
-                // Fetch del file JSON generato da n8n
-                const res = await fetch('dati-ticket.json?t=' + Date.now());
-                if (!res.ok) throw new Error("File non trovato");
-                
+                const res = await fetch('dati-ticket.json?v=' + Date.now());
                 const data = await res.json();
+                const container = document.getElementById('tickets-list');
                 
-                // Forza i dati in un array (lista) anche se n8n manda un oggetto singolo
+                // data è l'array creato da n8n Aggregate
                 const tickets = Array.isArray(data) ? data : [data];
                 
-                document.getElementById('event-title').innerText = "DISPONIBILITÀ ATTUALE";
-                const box = document.getElementById('ticket-box');
-                
-                if (tickets.length === 0) {
-                    box.innerHTML = "<p>Nessun ticket disponibile al momento.</p>";
-                    return;
-                }
-
-                box.innerHTML = tickets.map(t => `
-                    <div class="card ${t.premium ? 'premium' : ''}">
-                        ${t.tag ? `<span class="tag">${t.tag}</span>` : ''}
-                        <h2 style="font-size: 26px; font-weight: 900;">${t.nome}</h2>
-                        <span class="price">${t.prezzo}€</span>
-                        <p class="desc">${t.descrizione}</p>
-                        <p class="info">Posti rimasti: ${t.postiDisponibili || 'N/A'}</p>
-                        <a href="${t.link || '#'}" class="btn ${t.active ? '' : 'disabled'}">
-                            ${t.active ? (t.postiDisponibili > 0 ? 'ACQUISTA ORA' : 'SOLDOUT') : 'NON DISPONIBILE'}
-                        </a>
+                container.innerHTML = tickets.map(t => `
+                    <div class="ticket-card">
+                        <div class="ticket-info">
+                            <span class="badge ${t.premium ? 'badge-exclusive' : 'badge-promo'}">
+                                ${t.tag || 'DISPONIBILE'}
+                            </span>
+                            <h3>${t.nome}</h3>
+                            <p>${t.descrizione}</p>
+                            <div class="availability">SOLO ${t.postiDisponibili} DISPONIBILI</div>
+                        </div>
+                        <div class="ticket-buy">
+                            <span class="price">${t.prezzo},00 €</span>
+                            ${t.active ? 
+                                `<a href="#" class="btn-buy">AGGIUNGI</a>` : 
+                                `<a class="btn-buy btn-soldout">SOLDOUT</a>`
+                            }
+                        </div>
                     </div>
                 `).join('');
-
-            } catch (err) {
-                document.getElementById('event-title').innerText = "ERRORE CONNESSIONE";
-                document.getElementById('ticket-box').innerHTML = "<p style='color:#555'>I ticket non sono ancora pronti o n8n è offline.</p>";
-                console.error("Errore:", err);
+            } catch (e) {
+                document.getElementById('tickets-list').innerHTML = "<p>Errore nel caricamento. Controlla n8n.</p>";
             }
         }
-
-        // Avvio automatico
         loadTickets();
     </script>
 </body>
