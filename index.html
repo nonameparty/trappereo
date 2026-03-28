@@ -1,47 +1,44 @@
 <section id="tickets" class="tickets-container">
-        <div id="loading-msg" style="text-align: center; width: 100%; color: #555;">Caricamento ticket in corso...</div>
+        <div class="ticket-card">
+            <h3>STANDARD</h3>
+            <span class="price">15€</span>
+            <p>✅ Ingresso Garantito</p>
+            <p>✅ 1 Drink Incluso</p>
+            <a href="#" class="btn-primary" style="margin-top: 20px; padding: 10px 25px; font-size: 14px;">ACQUISTA</a>
+        </div>
+
+        <div class="ticket-card vip">
+            <h3>VIP SALTACONDA ⚡</h3>
+            <span class="price">25€</span>
+            <p>✅ Ingresso Prioritario (No Coda)</p>
+            <p>✅ 1 Drink Premium</p>
+            <p>✅ Accesso Area Privé</p>
+            <a href="#" class="btn-primary" style="margin-top: 20px; padding: 10px 25px; font-size: 14px;">ACQUISTA</a>
+        </div>
     </section>
 
-<script>
-        // --- PARTE NUOVA: SINCRONIZZAZIONE TICKET ---
-        const DATA_URL = './dati-ticket.json'; // Il file creato da n8n in /public
-
-        async function caricaTicket() {
-            try {
-                const response = await fetch(DATA_URL);
-                if (!response.ok) throw new Error("File non trovato");
-                const tickets = await response.json();
-
-                const container = document.getElementById('tickets');
-                container.innerHTML = ''; // Puliamo il messaggio di caricamento
-
-                tickets.forEach(t => {
-                    // Creiamo la card per ogni riga "true" del foglio Google
-                    const isVip = t.tag === 'VIP' || t.tag === 'EXCLUSIVE';
-                    const card = document.createElement('div');
-                    card.className = `ticket-card ${isVip ? 'vip' : ''}`;
-                    
-                    card.innerHTML = `
-                        <h3>${t.nome} ${isVip ? '⚡' : ''}</h3>
-                        <span class="price">${t.prezzo}€</span>
-                        <p>${t.descrizione}</p>
-                        <p style="font-size: 12px; color: #555; margin-top: 10px;">${t.tag}</p>
-                        <a href="#" class="btn-primary" style="margin-top: 20px; padding: 10px 25px; font-size: 14px;">ACQUISTA</a>
-                    `;
-                    container.appendChild(card);
-                });
-            } catch (err) {
-                console.error("Errore caricamento:", err);
-                document.getElementById('loading-msg').innerHTML = "Ticket momentaneamente non disponibili.";
-            }
-        }
-
-        // Avviamo il caricamento all'apertura della pagina
-        caricaTicket();
-
-        // --- IL TUO VECCHIO CODICE FIREBASE (Lascialo qui sotto) ---
+    <script>
+        // --- IL TUO VECCHIO CODICE FIREBASE (Ripristinato) ---
         const firebaseConfig = {
-            // ... le tue credenziali ...
+            apiKey: "AIzaSyATKCIfFo6uPwEUTZh00QIVvAJrq1L0Pw8",
+            authDomain: "trappereo-7a89a.firebaseapp.com",
+            projectId: "trappereo-7a89a",
+            storageBucket: "trappereo-7a89a.firebasestorage.app",
+            messagingSenderId: "579456256023",
+            appId: "1:579456256023:web:56c2f97bbbe82c371b7452"
         };
-        // ... restanti funzioni firebase e modale ...
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // ⌘ + SHIFT + F per la modale staff
+        window.addEventListener("keydown", (e) => {
+            if (e.metaKey && e.shiftKey && e.code === 'KeyF') {
+                e.preventDefault();
+                document.getElementById("authModal").style.display = "flex";
+            }
+        });
+
+        // Qui sotto rimangono le tue funzioni doReg, doLogin, showView, etc.
+        // ... (il codice che avevi già scritto per Firebase) ...
     </script>
