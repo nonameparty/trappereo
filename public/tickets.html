@@ -6,7 +6,7 @@
     <title>Tickets | TRAPPEREO</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #000; --card: #111; --sub: #888; --accent: #7866df; --panna: #ddd; }
+        :root { --bg: #000; --card: #111; --sub: #888; --accent: #7866df; --panna: #ddd; --error: #ff4444; }
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; }
         body { background:var(--bg); color:#fff; padding:20px; }
         
@@ -17,11 +17,11 @@
         .list { display:flex; flex-direction:column; gap:12px; }
         .ticket { 
             background:var(--card); border:1px solid #222; border-left: 5px solid #333; 
-            border-radius:14px; padding:20px; min-height: 100px;
+            border-radius:14px; padding:22px; min-height: 105px;
             display:flex; justify-content:space-between; align-items:center;
         }
-        .info h3 { font-size:19px; font-weight:900; text-transform:uppercase; }
-        .info p { color:#666; font-size:12px; margin-top:4px; }
+        .info h3 { font-size:20px; font-weight:900; text-transform:uppercase; }
+        .info p { color:#666; font-size:13px; margin-top:4px; }
         
         .final-disclaimer { color:#555; font-size:12px; margin-top:20px; font-weight: 500; }
 
@@ -35,7 +35,7 @@
             padding: 12px 20px; border-radius: 40px; display: none; align-items: center; gap: 15px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.8); z-index: 999;
         }
-        .checkout-btn { background: var(--accent); color: #fff; padding: 10px 22px; border-radius: 30px; font-size: 12px; font-weight: 900; text-transform: uppercase; border: none; }
+        .checkout-btn { background: var(--accent); color: #fff; padding: 10px 22px; border-radius: 30px; font-size: 12px; font-weight: 900; text-transform: uppercase; border: none; cursor: pointer; }
 
         /* Modal */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000; display: none; padding: 20px; overflow-y: auto; }
@@ -44,26 +44,31 @@
         .guest-type-title { font-size: 14px; font-weight: 900; text-transform: uppercase; color: var(--accent); margin-bottom: 15px; display: block; }
         
         .input-group { margin-bottom: 14px; }
-        .input-group label { display: block; font-size: 10px; text-transform: uppercase; color: #888; margin-bottom: 6px; }
+        .input-group label { display: block; font-size: 10px; text-transform: uppercase; color: #fff; margin-bottom: 6px; font-weight: 700; }
         .input-group input { width: 100%; background: #1a1a1a; border: 1px solid #333; padding: 14px; border-radius: 10px; color: #fff; font-size: 16px; outline: none; }
-        .input-group input:focus { border-color: var(--accent); }
+        
+        .drink-info { color: var(--panna); font-size: 13px; margin-top: 8px; font-weight: 500; }
+        .age-error { background: var(--error); color: #fff; padding: 12px; border-radius: 10px; font-size: 12px; font-weight: 900; margin-top: 10px; display: none; text-transform: uppercase; }
 
-        .drink-info { color: var(--panna); font-size: 13px; margin-top: 8px; font-weight: 500; min-height: 18px; }
+        .summary-box { background: #1a1a1a; border-radius: 15px; padding: 20px; margin: 20px 0; text-align: center; border: 1px dashed #333; }
+        .summary-box p { font-size: 11px; color: #888; text-transform: uppercase; font-weight: 800; }
+        .summary-box h2 { font-size: 32px; font-weight: 900; color: #fff; }
 
-        .buy-now-btn { width: 100%; padding: 22px; background: #fff; color: #000; font-weight: 900; border-radius: 15px; border: none; font-size: 16px; text-transform: uppercase; margin-top: 20px; }
+        .buy-now-btn { width: 100%; padding: 22px; background: #fff; color: #000; font-weight: 900; border-radius: 15px; border: none; font-size: 16px; text-transform: uppercase; cursor: pointer; }
+        .buy-now-btn:disabled { background: #333; color: #666; cursor: not-allowed; }
     </style>
 </head>
 <body>
 
     <div class="container" id="main-page">
         <h1>BIGLIETTI</h1>
-        <p class="subtitle">Scegli la quantità</p>
+        <p class="subtitle">SELEZIONA E VAI AL PAGAMENTO</p>
         <div id="ticket-list" class="list">Caricamento...</div>
         <div id="disclaimer-area"></div>
     </div>
 
     <div id="summary" class="checkout-bar">
-        <div class="total-box"><span>Totale</span><h4 id="grand-total">0€</h4></div>
+        <div class="total-box"><span style="font-size:9px; font-weight:800; color:#888; text-transform:uppercase;">Totale</span><h4 id="grand-total" style="font-size:20px; font-weight:900;">0€</h4></div>
         <button class="checkout-btn" onclick="openNominativi()">Checkout</button>
     </div>
 
@@ -71,18 +76,23 @@
         <div class="modal-content">
             <a href="javascript:void(0)" onclick="closeModal()" style="color:#555; text-decoration:none; font-size:11px; font-weight:800; text-transform:uppercase; display:block; margin: 20px 0;">← Indietro</a>
             <h1>DETTAGLI</h1>
-            <p class="subtitle">Inserisci i dati obbligatori</p>
+            <p class="subtitle">Inserisci i dati per ogni partecipante</p>
             
             <form id="checkout-form">
                 <div id="guests-container"></div>
                 
                 <div class="guest-section">
                     <span class="guest-type-title">Contatto Ordine</span>
-                    <div class="input-group"><label>Email</label><input type="email" id="main-email" required placeholder="Inserisci Email"></div>
-                    <div class="input-group"><label>Telefono</label><input type="tel" id="main-phone" required placeholder="Inserisci Cellulare"></div>
+                    <div class="input-group"><label>Email per invio biglietti</label><input type="email" id="main-email" required placeholder="esempio@email.it"></div>
+                    <div class="input-group"><label>Cellulare</label><input type="tel" id="main-phone" required placeholder="+39"></div>
                 </div>
 
-                <button type="submit" class="buy-now-btn">Acquista Ora</button>
+                <div class="summary-box">
+                    <p>Totale Ordine</p>
+                    <h2 id="final-price-display">0€</h2>
+                </div>
+
+                <button type="submit" id="final-buy-btn" class="buy-now-btn">Acquista Ora</button>
             </form>
         </div>
     </div>
@@ -97,13 +107,17 @@
                 const r = await fetch('dati-ticket.json?v=' + Date.now());
                 const data = await r.json();
                 let tickets = Array.isArray(data) ? data : (data[""] || []);
-                container.innerHTML = tickets.filter(t => t.nome).map((t, i) => {
+                
+                // FIX LOOP: Filtro per nomi unici per evitare duplicati n8n
+                const uniqueTickets = tickets.filter((v, i, a) => v.nome && a.findIndex(t => t.nome === v.nome) === i);
+
+                container.innerHTML = uniqueTickets.map((t, i) => {
                     cart[i] = { nome: t.nome, prezzo: parseInt(t.prezzo), qta: 0, desc: t.descrizione };
                     return `
                     <div class="ticket" style="border-left-color: ${t.colore || '#333'}">
                         <div class="info"><h3>${t.nome}</h3><p>${t.descrizione || ''}</p></div>
                         <div class="right-side">
-                            <span style="font-weight:900; font-size:17px; margin-right:10px">${t.prezzo}€</span>
+                            <span style="font-weight:900; font-size:18px; margin-right:10px">${t.prezzo}€</span>
                             <div class="qty-ctrl">
                                 <button class="qty-btn" onclick="update(${i}, -1)">-</button>
                                 <span class="qty-num" id="q-${i}">0</span>
@@ -113,7 +127,7 @@
                     </div>`;
                 }).join('');
                 document.getElementById('disclaimer-area').innerHTML = `<p class="final-disclaimer">*Drink alcolico se maggiorenne o analcolico se minorenne</p>`;
-            } catch (e) { container.innerHTML = "Errore dati."; }
+            } catch (e) { container.innerHTML = "Errore caricamento dati."; }
         }
 
         window.update = (id, delta) => {
@@ -130,6 +144,9 @@
 
         function checkAge(dobValue, index, baseDesc) {
             const drinkSpan = document.getElementById(`drink-info-${index}`);
+            const errorBanner = document.getElementById(`age-error-${index}`);
+            const buyBtn = document.getElementById('final-buy-btn');
+            
             if(!dobValue) return;
             
             const birth = new Date(dobValue);
@@ -138,11 +155,21 @@
             const m = today.getMonth() - birth.getMonth();
             if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
 
-            // Estrai numero drink dalla descrizione (es: "2 drink" -> 2)
+            // Reset
+            errorBanner.style.display = 'none';
+            buyBtn.disabled = false;
+
+            if (age < 16) {
+                errorBanner.innerText = "ACCESSO NEGATO: L'EVENTO È VIETATO AI MINORI DI 16 ANNI.";
+                errorBanner.style.display = 'block';
+                buyBtn.disabled = true;
+                drinkSpan.innerText = "";
+                return;
+            }
+
             const numMatch = baseDesc.match(/(\d+)\s*drink/i);
             const numDrink = numMatch ? numMatch[1] : "1";
             const tipo = age >= 18 ? "alcolici" : "analcolici";
-            
             drinkSpan.innerText = `Hai ${numDrink} drink ${tipo} inclusi`;
         }
 
@@ -150,19 +177,21 @@
             const scelti = Object.values(cart).filter(i => i.qta > 0);
             const container = document.getElementById('guests-container');
             container.innerHTML = '';
+            document.getElementById('final-price-display').innerText = currentTotal + '€';
             
             let count = 1;
             scelti.forEach(t => {
                 for(let n = 0; n < t.qta; n++) {
                     container.innerHTML += `
                         <div class="guest-section">
-                            <span class="guest-type-title">${t.nome} #${n+1}</span>
-                            <div class="input-group"><label>Nome</label><input type="text" required></div>
-                            <div class="input-group"><label>Cognome</label><input type="text" required></div>
+                            <span class="guest-type-title">${t.nome}</span>
+                            <div class="input-group"><label>Nome Partecipante</label><input type="text" required placeholder="Nome"></div>
+                            <div class="input-group"><label>Cognome Partecipante</label><input type="text" required placeholder="Cognome"></div>
                             <div class="input-group">
                                 <label>Data di Nascita</label>
                                 <input type="date" required onchange="checkAge(this.value, ${count}, '${t.desc}')">
                                 <div class="drink-info" id="drink-info-${count}"></div>
+                                <div class="age-error" id="age-error-${count}"></div>
                             </div>
                         </div>`;
                     count++;
