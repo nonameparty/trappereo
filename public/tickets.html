@@ -6,71 +6,51 @@
     <title>Tickets | TRAPPEREO</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #000; --card: #111; --sub: #888; --accent: #6a5acd; } /* Viola elegante */
+        :root { --bg: #000; --card: #111; --sub: #888; --accent: #7866df; --panna: #ddd; }
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; }
-        body { background:var(--bg); color:#fff; padding:20px; overflow-x: hidden; }
+        body { background:var(--bg); color:#fff; padding:20px; }
         
         .container { max-width:800px; margin:0 auto; padding-bottom: 140px; }
-        h1 { font-size:32px; font-weight:900; text-transform:uppercase; letter-spacing:-1.5px; margin-bottom:8px; }
-        .subtitle { color:#555; margin-bottom:25px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; }
+        h1 { font-size:34px; font-weight:900; text-transform:uppercase; letter-spacing:-1.5px; margin-bottom:8px; }
+        .subtitle { color:#555; margin-bottom:25px; font-size:11px; font-weight:700; text-transform:uppercase; }
         
         .list { display:flex; flex-direction:column; gap:12px; }
         .ticket { 
             background:var(--card); border:1px solid #222; border-left: 5px solid #333; 
-            border-radius:14px; padding:18px; min-height: 90px;
+            border-radius:14px; padding:20px; min-height: 100px;
             display:flex; justify-content:space-between; align-items:center;
         }
-        .info h3 { font-size:18px; font-weight:900; text-transform:uppercase; }
-        .info p { color:#666; font-size:12px; margin-top:4px; line-height: 1.3; }
+        .info h3 { font-size:19px; font-weight:900; text-transform:uppercase; }
+        .info p { color:#666; font-size:12px; margin-top:4px; }
         
-        /* Disclaimer unico a fine lista */
-        .final-disclaimer { color:#555; font-size:12px; margin-top:15px; text-align: left; font-weight: 500; }
+        .final-disclaimer { color:#555; font-size:12px; margin-top:20px; font-weight: 500; }
 
-        .right-side { text-align:right; display:flex; align-items:center; gap:15px; }
-        .price-tag { font-size:17px; font-weight:900; }
-
-        .qty-ctrl { 
-            display:flex; align-items:center; gap:10px; 
-            background:#1a1a1a; padding:6px 12px; border-radius:10px; border: 1px solid #333;
-        }
-        .qty-btn { background:none; color:#fff; border:none; width:22px; font-size:20px; cursor:pointer; font-weight:900; }
-        .qty-num { font-size:15px; font-weight:900; min-width:18px; text-align:center; }
+        .qty-ctrl { display:flex; align-items:center; gap:12px; background:#1a1a1a; padding:8px 15px; border-radius:10px; border: 1px solid #333; }
+        .qty-btn { background:none; color:#fff; border:none; font-size:22px; cursor:pointer; font-weight:900; }
+        .qty-num { font-size:16px; font-weight:900; min-width:20px; text-align:center; }
 
         /* Checkout Bar */
         .checkout-bar {
-            position: fixed; bottom: 25px; right: 20px;
-            background: #fff; color: #000;
-            padding: 12px 20px; border-radius: 40px;
-            display: none; align-items: center; gap: 15px;
+            position: fixed; bottom: 25px; right: 20px; background: #fff; color: #000;
+            padding: 12px 20px; border-radius: 40px; display: none; align-items: center; gap: 15px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.8); z-index: 999;
         }
-        .total-box span { font-size: 9px; font-weight: 800; text-transform: uppercase; color: #888; }
-        .total-box h4 { font-size: 20px; font-weight: 900; }
-        .checkout-btn { 
-            background: var(--accent); color: #fff; padding: 10px 22px; 
-            border-radius: 30px; font-size: 12px; font-weight: 900; 
-            text-transform: uppercase; border: none; cursor: pointer;
-        }
+        .checkout-btn { background: var(--accent); color: #fff; padding: 10px 22px; border-radius: 30px; font-size: 12px; font-weight: 900; text-transform: uppercase; border: none; }
 
         /* Modal */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000; display: none; padding: 20px; overflow-y: auto; }
         .modal-content { max-width: 600px; margin: 0 auto; padding-bottom: 50px; }
-        .guest-section { background: #111; border: 1px solid #222; border-radius: 15px; padding: 20px; margin-bottom: 15px; }
+        .guest-section { background: #111; border: 1px solid #222; border-radius: 15px; padding: 22px; margin-bottom: 15px; }
         .guest-type-title { font-size: 14px; font-weight: 900; text-transform: uppercase; color: var(--accent); margin-bottom: 15px; display: block; }
-        .input-group { margin-bottom: 12px; }
-        .input-group label { display: block; font-size: 9px; text-transform: uppercase; color: #666; margin-bottom: 4px; }
-        .input-group input { width: 100%; background: #1a1a1a; border: 1px solid #333; padding: 12px; border-radius: 10px; color: #fff; font-size: 15px; }
         
-        .summary-final { text-align: center; margin: 20px 0; padding: 15px; border-top: 1px solid #222; }
-        .summary-final p { font-size: 12px; color: #888; text-transform: uppercase; font-weight: 800; }
-        .summary-final h2 { font-size: 28px; font-weight: 900; }
+        .input-group { margin-bottom: 14px; }
+        .input-group label { display: block; font-size: 10px; text-transform: uppercase; color: #888; margin-bottom: 6px; }
+        .input-group input { width: 100%; background: #1a1a1a; border: 1px solid #333; padding: 14px; border-radius: 10px; color: #fff; font-size: 16px; outline: none; }
+        .input-group input:focus { border-color: var(--accent); }
 
-        .buy-now-btn { width: 100%; padding: 20px; background: #fff; color: #000; font-weight: 900; border-radius: 15px; border: none; font-size: 16px; text-transform: uppercase; cursor: pointer; }
+        .drink-info { color: var(--panna); font-size: 13px; margin-top: 8px; font-weight: 500; min-height: 18px; }
 
-        @media (min-width: 1024px) {
-            h1 { font-size: 40px; }
-            .ticket { padding: 22px; }
-        }
+        .buy-now-btn { width: 100%; padding: 22px; background: #fff; color: #000; font-weight: 900; border-radius: 15px; border: none; font-size: 16px; text-transform: uppercase; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -83,10 +63,7 @@
     </div>
 
     <div id="summary" class="checkout-bar">
-        <div class="total-box">
-            <span>Totale</span>
-            <h4 id="grand-total">0€</h4>
-        </div>
+        <div class="total-box"><span>Totale</span><h4 id="grand-total">0€</h4></div>
         <button class="checkout-btn" onclick="openNominativi()">Checkout</button>
     </div>
 
@@ -94,20 +71,15 @@
         <div class="modal-content">
             <a href="javascript:void(0)" onclick="closeModal()" style="color:#555; text-decoration:none; font-size:11px; font-weight:800; text-transform:uppercase; display:block; margin: 20px 0;">← Indietro</a>
             <h1>DETTAGLI</h1>
-            <p class="subtitle">Assegna i nomi ai biglietti</p>
+            <p class="subtitle">Inserisci i dati obbligatori</p>
             
             <form id="checkout-form">
                 <div id="guests-container"></div>
                 
                 <div class="guest-section">
-                    <span class="guest-type-title">Contatto Invio</span>
-                    <div class="input-group"><label>Email</label><input type="email" id="main-email" required></div>
-                    <div class="input-group"><label>Telefono</label><input type="tel" id="main-phone" required></div>
-                </div>
-
-                <div class="summary-final">
-                    <p>Totale da pagare</p>
-                    <h2 id="final-price-display">0€</h2>
+                    <span class="guest-type-title">Contatto Ordine</span>
+                    <div class="input-group"><label>Email</label><input type="email" id="main-email" required placeholder="Inserisci Email"></div>
+                    <div class="input-group"><label>Telefono</label><input type="tel" id="main-phone" required placeholder="Inserisci Cellulare"></div>
                 </div>
 
                 <button type="submit" class="buy-now-btn">Acquista Ora</button>
@@ -121,20 +93,17 @@
 
         async function fetchTickets() {
             const container = document.getElementById('ticket-list');
-            const discArea = document.getElementById('disclaimer-area');
             try {
                 const r = await fetch('dati-ticket.json?v=' + Date.now());
                 const data = await r.json();
                 let tickets = Array.isArray(data) ? data : (data[""] || []);
-                const clean = tickets.filter(t => t.nome && t.nome.trim() !== "");
-
-                container.innerHTML = clean.map((t, i) => {
-                    cart[i] = { nome: t.nome, prezzo: parseInt(t.prezzo), qta: 0 };
+                container.innerHTML = tickets.filter(t => t.nome).map((t, i) => {
+                    cart[i] = { nome: t.nome, prezzo: parseInt(t.prezzo), qta: 0, desc: t.descrizione };
                     return `
                     <div class="ticket" style="border-left-color: ${t.colore || '#333'}">
                         <div class="info"><h3>${t.nome}</h3><p>${t.descrizione || ''}</p></div>
                         <div class="right-side">
-                            <span class="price-tag">${t.prezzo}€</span>
+                            <span style="font-weight:900; font-size:17px; margin-right:10px">${t.prezzo}€</span>
                             <div class="qty-ctrl">
                                 <button class="qty-btn" onclick="update(${i}, -1)">-</button>
                                 <span class="qty-num" id="q-${i}">0</span>
@@ -143,9 +112,8 @@
                         </div>
                     </div>`;
                 }).join('');
-                
-                discArea.innerHTML = `<p class="final-disclaimer">*Drink alcolico se maggiorenne o analcolico se minorenne</p>`;
-            } catch (e) { container.innerHTML = "Errore caricamento."; }
+                document.getElementById('disclaimer-area').innerHTML = `<p class="final-disclaimer">*Drink alcolico se maggiorenne o analcolico se minorenne</p>`;
+            } catch (e) { container.innerHTML = "Errore dati."; }
         }
 
         window.update = (id, delta) => {
@@ -160,11 +128,28 @@
 
         window.closeModal = () => document.getElementById('checkout-modal').style.display = 'none';
 
+        function checkAge(dobValue, index, baseDesc) {
+            const drinkSpan = document.getElementById(`drink-info-${index}`);
+            if(!dobValue) return;
+            
+            const birth = new Date(dobValue);
+            const today = new Date("2026-03-28");
+            let age = today.getFullYear() - birth.getFullYear();
+            const m = today.getMonth() - birth.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+
+            // Estrai numero drink dalla descrizione (es: "2 drink" -> 2)
+            const numMatch = baseDesc.match(/(\d+)\s*drink/i);
+            const numDrink = numMatch ? numMatch[1] : "1";
+            const tipo = age >= 18 ? "alcolici" : "analcolici";
+            
+            drinkSpan.innerText = `Hai ${numDrink} drink ${tipo} inclusi`;
+        }
+
         function openNominativi() {
             const scelti = Object.values(cart).filter(i => i.qta > 0);
             const container = document.getElementById('guests-container');
             container.innerHTML = '';
-            document.getElementById('final-price-display').innerText = currentTotal + '€';
             
             let count = 1;
             scelti.forEach(t => {
@@ -172,26 +157,19 @@
                     container.innerHTML += `
                         <div class="guest-section">
                             <span class="guest-type-title">${t.nome} #${n+1}</span>
-                            <div class="input-group"><label>Nome</label><input type="text" name="n_${count}" required></div>
-                            <div class="input-group"><label>Cognome</label><input type="text" name="c_${count}" required></div>
+                            <div class="input-group"><label>Nome</label><input type="text" required></div>
+                            <div class="input-group"><label>Cognome</label><input type="text" required></div>
+                            <div class="input-group">
+                                <label>Data di Nascita</label>
+                                <input type="date" required onchange="checkAge(this.value, ${count}, '${t.desc}')">
+                                <div class="drink-info" id="drink-info-${count}"></div>
+                            </div>
                         </div>`;
                     count++;
                 }
             });
             document.getElementById('checkout-modal').style.display = 'block';
         }
-
-        document.getElementById('checkout-form').onsubmit = async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const payload = {
-                contatto: { email: document.getElementById('main-email').value, tel: document.getElementById('main-phone').value },
-                totale: currentTotal,
-                biglietti: []
-            };
-            // Logica di raccolta dati... (stessa di prima)
-            alert("Ordine inviato a n8n! Totale: " + currentTotal + "€");
-        };
 
         fetchTickets();
     </script>
