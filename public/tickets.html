@@ -2,53 +2,109 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tickets | TRAPPEREO</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --accent: #2ecc71; }
+        :root { --accent: #2ecc71; --bg: #000; --card: #111; }
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; }
-        body { background:#000; color:#fff; padding:40px 20px; }
-        .ticket { background:#111; border:1px solid #222; border-radius:16px; padding:25px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; }
-        .info h3 { font-size:22px; font-weight:900; text-transform:uppercase; }
-        .price { font-size:26px; font-weight:900; }
-        .btn { background:#fff; color:#000; padding:12px 25px; border-radius:8px; text-decoration:none; font-weight:900; }
-        .tag { color:var(--accent); font-size:10px; font-weight:900; border:1px solid var(--accent); padding:2px 8px; border-radius:4px; display:inline-block; margin-bottom:10px; }
+        body { background:var(--bg); color:#fff; padding:40px 20px; }
+        .container { max-width:800px; margin:0 auto; }
+        h1 { font-size:40px; font-weight:900; margin-bottom:10px; text-transform:uppercase; }
+        .subtitle { color:#666; margin-bottom:40px; font-size:14px; font-weight:700; text-transform:uppercase; letter-spacing:1px; }
+        
+        .list { display:flex; flex-direction:column; gap:20px; }
+        .ticket { 
+            background:var(--card); 
+            border:1px solid #222; 
+            border-radius:20px; 
+            padding:30px; 
+            display:flex; 
+            justify-content:space-between; 
+            align-items:center;
+            transition: transform 0.2s;
+        }
+        .ticket:hover { border-color:#333; }
+
+        .tag { 
+            font-size:10px; 
+            color:var(--accent); 
+            font-weight:900; 
+            border:1px solid var(--accent); 
+            padding:4px 10px; 
+            border-radius:6px; 
+            display:inline-block; 
+            margin-bottom:12px; 
+        }
+        .info h3 { font-size:24px; font-weight:900; margin-bottom:8px; }
+        .info p { color:#888; font-size:15px; line-height:1.4; max-width:400px; }
+        
+        .right-side { text-align:right; min-width:150px; }
+        .price { font-size:32px; font-weight:900; display:block; margin-bottom:15px; }
+        .btn { 
+            background:#fff; 
+            color:#000; 
+            padding:12px 24px; 
+            border-radius:10px; 
+            text-decoration:none; 
+            font-weight:900; 
+            font-size:14px;
+            display:inline-block;
+        }
+        .flash-msg { color:#ff4757; font-size:12px; font-weight:700; margin-top:10px; display:block; }
+
+        @media (max-width: 600px) {
+            .ticket { flex-direction: column; align-items: flex-start; gap: 20px; }
+            .right-side { text-align: left; }
+        }
     </style>
 </head>
 <body>
-    <div class="container" style="max-width:800px; margin:0 auto;">
-        <h1 style="margin-bottom:30px; font-size:40px; font-weight:900;">Biglietti</h1>
-        <div id="display">Caricamento...</div>
-    </div>
-    <script>
-        async function load() {
-            try {
-                const r = await fetch('dati-ticket.json?v=' + Date.now());
-                const raw = await r.json();
-                
-                // IL TRUCCO FINALE: trova la lista dei ticket ovunque sia nascosta
-                let list = [];
-                if (Array.isArray(raw)) { list = raw; }
-                else if (raw.empty && Array.isArray(raw.empty)) { list = raw.empty; }
-                else if (raw.data && Array.isArray(raw.data)) { list = raw.data; }
-                else { list = [raw]; }
 
-                document.getElementById('display').innerHTML = list.map(t => `
+    <div class="container">
+        <h1>Biglietti</h1>
+        <p class="subtitle">Seleziona la quantità e vai al pagamento</p>
+        
+        <div id="ticket-list" class="list">
+            </div>
+    </div>
+
+    <script>
+        async function fetchTickets() {
+            const container = document.getElementById('ticket-list');
+            try {
+                // Fetch con timestamp per evitare la cache del browser
+                const r = await fetch('dati-ticket.json?v=' + Date.now());
+                const tickets = await r.json();
+
+                if (!Array.isArray(tickets)) {
+                    throw new Error("Formato JSON non valido");
+                }
+
+                container.innerHTML = tickets.map(t => `
                     <div class="ticket">
                         <div class="info">
-                            <span class="tag">${t.tag || 'DISPONIBILE'}</span>
-                            <h3>${t.nome || 'Ticket'}</h3>
-                            <p style="color:#666; font-size:14px;">${t.descrizione || ''}</p>
+                            <span class="tag">${t.tag}</span>
+                            <h3>${t.nome}</h3>
+                            <p>${t.descrizione}</p>
+                            ${t.flashSaleAttivo ? `<span class="flash-msg">${t.flashSaleMsg}</span>` : ''}
                         </div>
-                        <div style="text-align:right">
-                            <span class="price">${t.prezzo || '0'},00 €</span><br><br>
+                        <div class="right-side">
+                            <span class="price">${t.prezzo},00 €</span>
                             <a href="#" class="btn">AGGIUNGI</a>
+                            <p style="font-size:10px; color:#444; margin-top:10px;">DISPONIBILI: ${t.postiDisponibili}</p>
                         </div>
                     </div>
                 `).join('');
-            } catch (e) { document.getElementById('display').innerHTML = "Errore dati."; }
+
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = '<p style="color:red">Errore nel caricamento dei biglietti. Riprova tra poco.</p>';
+            }
         }
-        load();
+
+        // Carica i ticket all'avvio
+        fetchTickets();
     </script>
 </body>
 </html>
