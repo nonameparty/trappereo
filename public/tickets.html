@@ -3,83 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biglietti | TRAPPEREO</title>
+    <title>Tickets | TRAPPEREO</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --purple: #8a2be2; --gray: #1a1a1a; }
+        :root { --accent: #2ecc71; --card: #111; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background: #000; color: white; padding: 40px 20px; }
         .container { max-width: 800px; margin: 0 auto; }
-        h1 { font-size: 40px; font-weight: 900; margin-bottom: 10px; }
-        .subtitle { color: #666; text-transform: uppercase; font-size: 12px; letter-spacing: 2px; margin-bottom: 40px; }
-        
-        .tickets-container { display: flex; flex-direction: column; gap: 15px; }
-        
-        /* CARD SINGOLA */
-        .ticket-card { 
-            background: var(--gray); 
-            border-radius: 15px; 
-            padding: 25px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            border: 1px solid #333;
-            transition: 0.3s;
+        h1 { font-size: 32px; font-weight: 900; margin-bottom: 30px; }
+        .list { display: flex; flex-direction: column; gap: 15px; }
+        .ticket { 
+            background: var(--card); border: 1px solid #222; border-radius: 16px; 
+            padding: 25px; display: flex; justify-content: space-between; align-items: center;
         }
-        .ticket-card:hover { border-color: var(--purple); }
-
-        .details h3 { font-size: 20px; font-weight: 800; text-transform: uppercase; }
-        .details p { color: #888; font-size: 14px; margin: 5px 0; }
-        .tag { font-size: 10px; background: #333; padding: 4px 8px; border-radius: 5px; color: var(--purple); font-weight: 900; }
-
-        .action { text-align: right; }
-        .price { font-size: 24px; font-weight: 900; display: block; margin-bottom: 10px; }
-        .btn { background: #fff; color: #000; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 900; font-size: 13px; }
-        
-        @media (max-width: 600px) {
-            .ticket-card { flex-direction: column; text-align: center; gap: 20px; }
-            .action { text-align: center; }
-        }
+        .info h3 { font-size: 20px; font-weight: 800; text-transform: uppercase; margin-bottom: 5px; }
+        .info p { color: #888; font-size: 14px; margin-bottom: 10px; }
+        .tag { font-size: 10px; color: var(--accent); font-weight: 900; border: 1px solid var(--accent); padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 10px; }
+        .price-zone { text-align: right; }
+        .price { font-size: 26px; font-weight: 900; display: block; margin-bottom: 10px; }
+        .btn { background: #fff; color: #000; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 900; }
+        @media (max-width: 600px) { .ticket { flex-direction: column; text-align: left; } .price-zone { text-align: left; margin-top: 20px; } }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Biglietti</h1>
-        <p class="subtitle">Seleziona la quantità e vai al pagamento</p>
-        
-        <div id="tickets-list" class="tickets-container">
-            </div>
+        <div id="tickets-box" class="list">Caricamento...</div>
     </div>
-
     <script>
-        async function getTickets() {
+        async function load() {
             try {
-                const res = await fetch('dati-ticket.json?v=' + Date.now());
-                const data = await res.json();
-                const list = document.getElementById('tickets-list');
+                const r = await fetch('dati-ticket.json?v=' + Date.now());
+                const data = await r.json();
+                const box = document.getElementById('tickets-box');
                 
-                // Se i dati arrivano come lista []
-                const tickets = Array.isArray(data) ? data : [data];
-                
-                list.innerHTML = tickets.map(t => `
-                    <div class="ticket-card">
-                        <div class="details">
-                            <span class="tag">${t.tag || 'EVENTO'}</span>
+                // DATA ora è una lista vera grazie alla tua modifica su n8n!
+                box.innerHTML = data.map(t => `
+                    <div class="ticket">
+                        <div class="info">
+                            <span class="tag">${t.tag || 'DISPONIBILE'}</span>
                             <h3>${t.nome}</h3>
                             <p>${t.descrizione}</p>
                             <small style="color:#444">DISPONIBILI: ${t.postiDisponibili}</small>
                         </div>
-                        <div class="action">
+                        <div class="price-zone">
                             <span class="price">${t.prezzo},00 €</span>
                             <a href="#" class="btn">AGGIUNGI</a>
                         </div>
                     </div>
                 `).join('');
-            } catch (e) {
-                console.error(e);
-            }
+            } catch (e) { console.error(e); }
         }
-        getTickets();
+        load();
     </script>
 </body>
 </html>
