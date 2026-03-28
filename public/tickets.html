@@ -2,16 +2,13 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tickets | TRAPPEREO</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --accent: #2ecc71; }
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; }
         body { background:#000; color:#fff; padding:40px 20px; }
-        .container { max-width:800px; margin:0 auto; }
-        .list { display:flex; flex-direction:column; gap:15px; }
-        .ticket { background:#111; border:1px solid #222; border-radius:16px; padding:25px; display:flex; justify-content:space-between; align-items:center; }
+        .ticket { background:#111; border:1px solid #222; border-radius:16px; padding:25px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; }
         .info h3 { font-size:22px; font-weight:900; text-transform:uppercase; }
         .price { font-size:26px; font-weight:900; }
         .btn { background:#fff; color:#000; padding:12px 25px; border-radius:8px; text-decoration:none; font-weight:900; }
@@ -19,45 +16,37 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" style="max-width:800px; margin:0 auto;">
         <h1 style="margin-bottom:30px; font-size:40px; font-weight:900;">Biglietti</h1>
-        <div id="display" class="list">Sincronizzazione...</div>
+        <div id="display">Caricamento...</div>
     </div>
     <script>
         async function load() {
             try {
-                // Fetch con timestamp per ignorare la cache di Vercel
-                const response = await fetch('dati-ticket.json?v=' + Date.now());
-                const rawData = await response.json();
+                const r = await fetch('dati-ticket.json?v=' + Date.now());
+                const raw = await r.json();
                 
-                // LOGICA DI RECUPERO DATI:
-                // Se n8n manda la lista in "empty", la prendiamo. 
-                // Altrimenti prendiamo l'oggetto così com'è.
-                const tickets = rawData.empty ? rawData.empty : (Array.isArray(rawData) ? rawData : [rawData]);
+                // IL TRUCCO FINALE: trova la lista dei ticket ovunque sia nascosta
+                let list = [];
+                if (Array.isArray(raw)) { list = raw; }
+                else if (raw.empty && Array.isArray(raw.empty)) { list = raw.empty; }
+                else if (raw.data && Array.isArray(raw.data)) { list = raw.data; }
+                else { list = [raw]; }
 
-                const box = document.getElementById('display');
-                if (!tickets || tickets.length === 0 || !tickets[0].nome) {
-                    box.innerHTML = "In attesa di nuovi ticket...";
-                    return;
-                }
-
-                box.innerHTML = tickets.map(t => `
+                document.getElementById('display').innerHTML = list.map(t => `
                     <div class="ticket">
                         <div class="info">
                             <span class="tag">${t.tag || 'DISPONIBILE'}</span>
-                            <h3>${t.nome}</h3>
-                            <p style="color:#666; font-size:14px; margin-top:5px;">${t.descrizione || ''}</p>
+                            <h3>${t.nome || 'Ticket'}</h3>
+                            <p style="color:#666; font-size:14px;">${t.descrizione || ''}</p>
                         </div>
                         <div style="text-align:right">
-                            <span class="price">${t.prezzo},00 €</span><br><br>
+                            <span class="price">${t.prezzo || '0'},00 €</span><br><br>
                             <a href="#" class="btn">AGGIUNGI</a>
                         </div>
                     </div>
                 `).join('');
-            } catch (e) {
-                console.error("Errore critico:", e);
-                document.getElementById('display').innerHTML = "Sincronizzazione in corso... ricarica tra un istante.";
-            }
+            } catch (e) { document.getElementById('display').innerHTML = "Errore dati."; }
         }
         load();
     </script>
