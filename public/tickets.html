@@ -6,36 +6,52 @@
     <title>Tickets | TRAPPEREO</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #000; --card: #111; }
+        :root { --bg: #000; --card: #111; --text: #fff; --sub: #666; --accent: #fff; }
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; }
-        body { background:var(--bg); color:#fff; padding:15px; overflow-x: hidden; }
-        .container { max-width:800px; margin:0 auto; padding-bottom: 120px; }
-        h1 { font-size:26px; font-weight:900; text-transform:uppercase; letter-spacing:-1px; margin-bottom:5px; }
-        .subtitle { color:#555; margin-bottom:20px; font-size:10px; font-weight:700; text-transform:uppercase; }
-        .list { display:flex; flex-direction:column; gap:10px; }
-        .ticket { background:var(--card); border:1px solid #222; border-left: 4px solid #333; border-radius:12px; padding:15px; display:flex; justify-content:space-between; align-items:center; }
-        .info h3 { font-size:15px; font-weight:900; text-transform:uppercase; }
-        .info p { color:#666; font-size:11px; margin-top:2px; }
-        .right-side { text-align:right; display:flex; align-items:center; gap:12px; }
-        .price-tag { font-size:15px; font-weight:900; color:#888; }
-        .qty-ctrl { display:flex; align-items:center; gap:8px; background:#1a1a1a; padding:4px 8px; border-radius:8px; }
-        .qty-btn { background:none; color:#fff; border:none; width:20px; font-size:18px; cursor:pointer; font-weight:900; }
-        .qty-num { font-size:13px; font-weight:900; min-width:15px; text-align:center; }
+        body { background:var(--bg); color:var(--text); padding:15px; overflow-x: hidden; }
+        .container { max-width:800px; margin:0 auto; padding-bottom: 110px; }
         
-        .summary-bar {
-            position: fixed; bottom: 25px; right: 20px; background: #fff; color: #000;
-            padding: 12px 20px; border-radius: 40px; display: none; align-items: center;
-            gap: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); z-index: 999;
+        h1 { font-size:28px; font-weight:900; text-transform:uppercase; letter-spacing:-1px; margin-bottom:5px; }
+        .subtitle { color:var(--sub); margin-bottom:20px; font-size:11px; font-weight:700; text-transform:uppercase; }
+        
+        .list { display:flex; flex-direction:column; gap:12px; }
+        
+        .ticket { 
+            background:var(--card); border:1px solid #222; border-left: 5px solid #333; 
+            border-radius:12px; padding:18px; display:flex; justify-content:space-between; align-items:center;
         }
-        .total-info { line-height: 1; }
-        .total-info span { font-size: 9px; font-weight: 800; text-transform: uppercase; color: #888; }
-        .total-info h4 { font-size: 18px; font-weight: 900; }
-        .checkout-btn { background: #000; color: #fff; padding: 10px 18px; border-radius: 30px; font-size: 11px; font-weight: 900; text-transform: uppercase; border: none; cursor: pointer; }
+
+        .info h3 { font-size:16px; font-weight:900; text-transform:uppercase; }
+        .info p { color:#555; font-size:12px; margin-top:2px; }
+        
+        .right-side { text-align:right; display:flex; align-items:center; gap:12px; }
+        .price-tag { font-size:16px; font-weight:900; color:var(--sub); }
+
+        .qty-ctrl { display:flex; align-items:center; gap:8px; background:#1a1a1a; padding:4px 10px; border-radius:8px; }
+        .qty-btn { background:none; color:var(--text); border:none; width:22px; height:22px; font-size:18px; cursor:pointer; font-weight:900; border-radius: 5px;}
+        .qty-btn:hover { background: #333;}
+        .qty-num { font-size:14px; font-weight:900; min-width:18px; text-align:center; }
+
+        /* Barra di Riepilogo Compatta in basso a destra */
+        .summary-bar {
+            position: fixed; bottom: 25px; right: 25px;
+            background: var(--text); color: var(--bg);
+            padding: 12px 20px; border-radius: 40px;
+            display: none; align-items: center; gap: 18px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            z-index: 999;
+        }
+        .total-wrapper { line-height: 1.1; }
+        .total-wrapper span { font-size: 10px; font-weight: 800; text-transform: uppercase; color: #888; }
+        .total-wrapper h4 { font-size: 18px; font-weight: 900; letter-spacing: -0.5px; }
+        .buy-btn { background: var(--bg); color: var(--text); padding: 10px 18px; border-radius: 30px; font-size: 11px; font-weight: 900; text-transform: uppercase; border: none; cursor: pointer; transition: 0.2s; }
+        .buy-btn:hover { background: #222; }
 
         @media (min-width: 1024px) {
             h1 { font-size: 38px; }
-            .ticket { padding: 22px; }
+            .ticket { padding: 25px; }
             .info h3 { font-size: 20px; }
+            .summary-bar { bottom: 40px; right: 40px; transform: scale(1.1); }
         }
     </style>
 </head>
@@ -43,16 +59,16 @@
 
     <div class="container">
         <h1>BIGLIETTI</h1>
-        <p class="subtitle">Scegli la quantità</p>
-        <div id="ticket-list" class="list">Caricamento in corso...</div>
+        <p class="subtitle">Seleziona e vai al pagamento</p>
+        <div id="ticket-list" class="list">Caricamento tickets...</div>
     </div>
 
     <div id="summary" class="summary-bar">
-        <div class="total-info">
+        <div class="total-wrapper">
             <span>Totale</span>
             <h4 id="grand-total">0€</h4>
         </div>
-        <button class="checkout-btn" onclick="goToN8n()">Checkout</button>
+        <button class="buy-btn" onclick="sendToCheckout()">Acquista</button>
     </div>
 
     <script>
@@ -61,68 +77,49 @@
         async function fetchTickets() {
             const container = document.getElementById('ticket-list');
             try {
-                // USIAMO LA TUA LOGICA ORIGINALE DI FETCH
+                // Carica il JSON aggiornato dall'AI
                 const r = await fetch('dati-ticket.json?v=' + Date.now());
                 const data = await r.json();
-                
-                // Questa è la riga che probabilmente si era rotta:
                 let tickets = Array.isArray(data) ? data : (data[""] || []);
 
-                // Pulizia duplicati come facevi tu
                 const cleanTickets = tickets
                     .filter(t => t.nome && t.nome.trim() !== "")
                     .filter((v, i, a) => a.findIndex(t => t.nome === v.nome) === i);
 
-                if (cleanTickets.length === 0) {
-                    container.innerHTML = "Nessun biglietto trovato.";
-                    return;
-                }
-
                 container.innerHTML = cleanTickets.map((t, i) => {
-                    // Inizializzo il carrello per ogni biglietto caricato da n8n
                     cart[i] = { nome: t.nome, prezzo: parseInt(t.prezzo), qta: 0 };
-                    
                     return `
                     <div class="ticket" style="border-left-color: ${t.colore || '#333'}">
-                        <div class="info">
-                            <h3>${t.nome}</h3>
-                            <p>${t.descrizione || ''}</p>
-                        </div>
+                        <div class="info"><h3>${t.nome}</h3><p>${t.descrizione || ''}</p></div>
                         <div class="right-side">
                             <span class="price-tag">${t.prezzo}€</span>
                             <div class="qty-ctrl">
-                                <button class="qty-btn" onclick="update(${i}, -1)">-</button>
+                                <button class="qty-btn" onclick="updateQty(${i}, -1)">-</button>
                                 <span class="qty-num" id="q-${i}">0</span>
-                                <button class="qty-btn" onclick="update(${i}, 1)">+</button>
+                                <button class="qty-btn" onclick="updateQty(${i}, 1)">+</button>
                             </div>
                         </div>
                     </div>`;
                 }).join('');
-            } catch (err) {
-                container.innerHTML = "Errore caricamento dati n8n.";
-            }
+            } catch (err) { container.innerHTML = '<p>Errore dati n8n...</p>'; }
         }
 
-        window.update = (id, delta) => {
+        window.updateQty = (id, delta) => {
             cart[id].qta = Math.max(0, cart[id].qta + delta);
             document.getElementById(`q-${id}`).innerText = cart[id].qta;
             
-            let total = 0;
-            let items = 0;
-            for (let k in cart) { 
-                total += cart[k].qta * cart[k].prezzo; 
-                items += cart[k].qta; 
-            }
+            let total = 0, items = 0;
+            for (let k in cart) { total += cart[k].qta * cart[k].prezzo; items += cart[k].qta; }
             
             document.getElementById('grand-total').innerText = total + '€';
             document.getElementById('summary').style.display = items > 0 ? 'flex' : 'none';
         };
 
-        function goToN8n() {
+        function sendToCheckout() {
             const scelti = Object.values(cart).filter(i => i.qta > 0);
-            alert("Invio a n8n: " + JSON.stringify(scelti));
+            alert("Checkout per: " + JSON.stringify(scelti));
+            // Qui poi attiveremo il tuo webhook n8n
         }
-
         fetchTickets();
     </script>
 </body>
