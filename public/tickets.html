@@ -22,7 +22,6 @@
         .qty-btn { background:none; color:#fff; border:none; width:20px; font-size:18px; cursor:pointer; font-weight:900; }
         .qty-num { font-size:13px; font-weight:900; min-width:15px; text-align:center; }
         
-        /* Riepilogo in basso a destra stile Apple */
         .summary-bar {
             position: fixed; bottom: 25px; right: 20px; background: #fff; color: #000;
             padding: 12px 20px; border-radius: 40px; display: none; align-items: center;
@@ -37,7 +36,6 @@
             h1 { font-size: 38px; }
             .ticket { padding: 22px; }
             .info h3 { font-size: 20px; }
-            .summary-bar { bottom: 40px; right: 40px; transform: scale(1.1); }
         }
     </style>
 </head>
@@ -46,7 +44,7 @@
     <div class="container">
         <h1>BIGLIETTI</h1>
         <p class="subtitle">Scegli la quantità</p>
-        <div id="ticket-list" class="list"></div>
+        <div id="ticket-list" class="list">Caricamento in corso...</div>
     </div>
 
     <div id="summary" class="summary-bar">
@@ -59,30 +57,73 @@
 
     <script>
         let cart = {};
+
         async function fetchTickets() {
             const container = document.getElementById('ticket-list');
-            const r = await fetch('dati-ticket.json?v=' + Date.now());
-            const data = await r.json();
-            let tickets = Array.isArray(data) ? data : (data[""] || []);
-            container.innerHTML = tickets.filter(t => t.nome).map((t, i) => {
-                cart[i] = { nome: t.nome, prezzo: parseInt(t.prezzo), qta: 0 };
-                return `
-                <div class="ticket" style="border-left-color: ${t.colore || '#333'}">
-                    <div class="info"><h3>${t.nome}</h3><p>${t.descrizione || ''}</p></div>
-                    <div class="right-side">
-                        <span class="price-tag">${t.prezzo}€</span>
-                        <div class="qty-ctrl">
-                            <button class="qty-btn" onclick="update(${i}, -1)">-</button>
-                            <span class="qty-num" id="q-${i}">0</span>
-                            <button class="qty-btn" onclick="update(${i}, 1)">+</button>
+            try {
+                // USIAMO LA TUA LOGICA ORIGINALE DI FETCH
+                const r = await fetch('dati-ticket.json?v=' + Date.now());
+                const data = await r.json();
+                
+                // Questa è la riga che probabilmente si era rotta:
+                let tickets = Array.isArray(data) ? data : (data[""] || []);
+
+                // Pulizia duplicati come facevi tu
+                const cleanTickets = tickets
+                    .filter(t => t.nome && t.nome.trim() !== "")
+                    .filter((v, i, a) => a.findIndex(t => t.nome === v.nome) === i);
+
+                if (cleanTickets.length === 0) {
+                    container.innerHTML = "Nessun biglietto trovato.";
+                    return;
+                }
+
+                container.innerHTML = cleanTickets.map((t, i) => {
+                    // Inizializzo il carrello per ogni biglietto caricato da n8n
+                    cart[i] = { nome: t.nome, prezzo: parseInt(t.prezzo), qta: 0 };
+                    
+                    return `
+                    <div class="ticket" style="border-left-color: ${t.colore || '#333'}">
+                        <div class="info">
+                            <h3>${t.nome}</h3>
+                            <p>${t.descrizione || ''}</p>
                         </div>
-                    </div>
-                </div>`;
-            }).join('');
+                        <div class="right-side">
+                            <span class="price-tag">${t.prezzo}€</span>
+                            <div class="qty-ctrl">
+                                <button class="qty-btn" onclick="update(${i}, -1)">-</button>
+                                <span class="qty-num" id="q-${i}">0</span>
+                                <button class="qty-btn" onclick="update(${i}, 1)">+</button>
+                            </div>
+                        </div>
+                    </div>`;
+                }).join('');
+            } catch (err) {
+                container.innerHTML = "Errore caricamento dati n8n.";
+            }
         }
 
         window.update = (id, delta) => {
             cart[id].qta = Math.max(0, cart[id].qta + delta);
             document.getElementById(`q-${id}`).innerText = cart[id].qta;
-            let total = 0, items = 0;
-            for (
+            
+            let total = 0;
+            let items = 0;
+            for (let k in cart) { 
+                total += cart[k].qta * cart[k].prezzo; 
+                items += cart[k].qta; 
+            }
+            
+            document.getElementById('grand-total').innerText = total + '€';
+            document.getElementById('summary').style.display = items > 0 ? 'flex' : 'none';
+        };
+
+        function goToN8n() {
+            const scelti = Object.values(cart).filter(i => i.qta > 0);
+            alert("Invio a n8n: " + JSON.stringify(scelti));
+        }
+
+        fetchTickets();
+    </script>
+</body>
+</html>
