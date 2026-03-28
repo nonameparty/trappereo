@@ -29,7 +29,6 @@
         .qty-btn { background:none; color:#fff; border:none; font-size:22px; cursor:pointer; font-weight:900; }
         .qty-num { font-size:16px; font-weight:900; min-width:20px; text-align:center; }
 
-        /* Checkout Bar */
         .checkout-bar {
             position: fixed; bottom: 25px; right: 20px; background: #fff; color: #000;
             padding: 12px 20px; border-radius: 40px; display: none; align-items: center; gap: 15px;
@@ -37,7 +36,6 @@
         }
         .checkout-btn { background: var(--accent); color: #fff; padding: 10px 22px; border-radius: 30px; font-size: 12px; font-weight: 900; text-transform: uppercase; border: none; cursor: pointer; }
 
-        /* Modal */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000; display: none; padding: 20px; overflow-y: auto; }
         .modal-content { max-width: 600px; margin: 0 auto; padding-bottom: 50px; }
         .guest-section { background: #111; border: 1px solid #222; border-radius: 15px; padding: 22px; margin-bottom: 15px; }
@@ -46,6 +44,7 @@
         .input-group { margin-bottom: 14px; }
         .input-group label { display: block; font-size: 10px; text-transform: uppercase; color: #fff; margin-bottom: 6px; font-weight: 700; }
         .input-group input { width: 100%; background: #1a1a1a; border: 1px solid #333; padding: 14px; border-radius: 10px; color: #fff; font-size: 16px; outline: none; }
+        .input-group input:disabled { opacity: 0.4; cursor: not-allowed; }
         
         .drink-info { color: var(--panna); font-size: 13px; margin-top: 8px; font-weight: 500; }
         .age-error { background: var(--error); color: #fff; padding: 12px; border-radius: 10px; font-size: 12px; font-weight: 900; margin-top: 10px; display: none; text-transform: uppercase; }
@@ -100,6 +99,8 @@
     <script>
         let cart = {};
         let currentTotal = 0;
+        let guestData = [];
+        let redirectTimer = null;
 
         async function fetchTickets() {
             const container = document.getElementById('ticket-list');
@@ -107,8 +108,6 @@
                 const r = await fetch('dati-ticket.json?v=' + Date.now());
                 const data = await r.json();
                 let tickets = Array.isArray(data) ? data : (data[""] || []);
-                
-                // FIX LOOP: Filtro per nomi unici per evitare duplicati n8n
                 const uniqueTickets = tickets.filter((v, i, a) => v.nome && a.findIndex(t => t.nome === v.nome) === i);
 
                 container.innerHTML = uniqueTickets.map((t, i) => {
@@ -140,64 +139,81 @@
             document.getElementById('summary').style.display = items > 0 ? 'flex' : 'none';
         };
 
-        window.closeModal = () => document.getElementById('checkout-modal').style.display = 'none';
+        window.closeModal = () => {
+            document.getElementById('checkout-modal').style.display = 'none';
+            clearTimeout(redirectTimer);
+        };
 
-        function checkAge(dobValue, index, baseDesc) {
-            const drinkSpan = document.getElementById(`drink-info-${index}`);
-            const errorBanner = document.getElementById(`age-error-${index}`);
-            const buyBtn = document.getElementById('final-buy-btn');
+        function calculateFinalTotal() {
+            let finalPrice = 0;
+            let anyValid = false;
             
-            if(!dobValue) return;
-            
-            const birth = new Date(dobValue);
-            const today = new Date("2026-03-28");
-            let age = today.getFullYear() - birth.getFullYear();
-            const m = today.getMonth() - birth.getMonth();
-            if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+            guestData.forEach((guest, i) => {
+                const dobInput = document.getElementById(`dob-${i}`);
+                if (dobInput && dobInput.value) {
+                    const birth = new Date(dobInput.value);
+                    const today = new Date("2026-03-28");
+                    let age = today.getFullYear() - birth.getFullYear();
+                    if (today.getMonth() < birth.getMonth() || (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())) age--;
+                    
+                    const isBlocked = age < 16;
+                    document.getElementById(`name-${i}`).disabled = isBlocked;
+                    document.getElementById(`surname-${i}`).disabled = isBlocked;
+                    document.getElementById(`age-error-${i}`).style.display = isBlocked ? 'block' : 'none';
+                    document.getElementById(`drink-info-${i}`).style.display = isBlocked ? 'none' : 'block';
 
-            // Reset
-            errorBanner.style.display = 'none';
-            buyBtn.disabled = false;
+                    if (!isBlocked) {
+                        finalPrice += guest.prezzo;
+                        anyValid = true;
+                        const numMatch = guest.desc.match(/(\d+)\s*drink/i);
+                        const numDrink = numMatch ? numMatch[1] : "1";
+                        document.getElementById(`drink-info-${i}`).innerText = `Hai ${numDrink} drink ${age >= 18 ? 'alcolici' : 'analcolici'} inclusi`;
+                    }
+                }
+            });
 
-            if (age < 16) {
-                errorBanner.innerText = "ACCESSO NEGATO: L'EVENTO È VIETATO AI MINORI DI 16 ANNI.";
-                errorBanner.style.display = 'block';
-                buyBtn.disabled = true;
-                drinkSpan.innerText = "";
-                return;
+            document.getElementById('main-email').disabled = !anyValid;
+            document.getElementById('main-phone').disabled = !anyValid;
+            document.getElementById('final-price-display').innerText = finalPrice + '€';
+            document.getElementById('final-buy-btn').disabled = !anyValid || finalPrice === 0;
+
+            if (!anyValid) {
+                if (!redirectTimer) redirectTimer = setTimeout(() => { window.location.reload(); }, 60000);
+            } else {
+                clearTimeout(redirectTimer);
+                redirectTimer = null;
             }
-
-            const numMatch = baseDesc.match(/(\d+)\s*drink/i);
-            const numDrink = numMatch ? numMatch[1] : "1";
-            const tipo = age >= 18 ? "alcolici" : "analcolici";
-            drinkSpan.innerText = `Hai ${numDrink} drink ${tipo} inclusi`;
         }
 
         function openNominativi() {
             const scelti = Object.values(cart).filter(i => i.qta > 0);
             const container = document.getElementById('guests-container');
             container.innerHTML = '';
-            document.getElementById('final-price-display').innerText = currentTotal + '€';
+            guestData = [];
             
-            let count = 1;
+            let count = 0;
             scelti.forEach(t => {
                 for(let n = 0; n < t.qta; n++) {
+                    guestData.push({ nomeTicket: t.nome, prezzo: t.prezzo, desc: t.desc });
                     container.innerHTML += `
                         <div class="guest-section">
                             <span class="guest-type-title">${t.nome}</span>
-                            <div class="input-group"><label>Nome Partecipante</label><input type="text" required placeholder="Nome"></div>
-                            <div class="input-group"><label>Cognome Partecipante</label><input type="text" required placeholder="Cognome"></div>
+                            <div class="input-group"><label>Nome Partecipante</label><input type="text" id="name-${count}" required placeholder="Nome"></div>
+                            <div class="input-group"><label>Cognome Partecipante</label><input type="text" id="surname-${count}" required placeholder="Cognome"></div>
                             <div class="input-group">
                                 <label>Data di Nascita</label>
-                                <input type="date" required onchange="checkAge(this.value, ${count}, '${t.desc}')">
+                                <input type="date" id="dob-${count}" required onchange="calculateFinalTotal()">
                                 <div class="drink-info" id="drink-info-${count}"></div>
-                                <div class="age-error" id="age-error-${count}"></div>
+                                <div class="age-error" id="age-error-${count}">NON PUOI ACCEDERE AL LOCALE, L'EVENTO È +16</div>
                             </div>
                         </div>`;
                     count++;
                 }
             });
+            document.getElementById('final-price-display').innerText = '0€';
+            document.getElementById('final-buy-btn').disabled = true;
             document.getElementById('checkout-modal').style.display = 'block';
+            calculateFinalTotal();
         }
 
         fetchTickets();
