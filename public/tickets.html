@@ -2,73 +2,42 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tickets | TRAPPEREO</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #000; --card: #111; --text: #fff; --accent: #fff; }
+        :root { --bg: #000; --card: #111; }
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; }
-        body { background:var(--bg); color:var(--text); padding:20px; }
-        .container { max-width:900px; margin:0 auto; }
+        body { background:var(--bg); color:#fff; padding:15px; overflow-x: hidden; }
+        .container { max-width:800px; margin:0 auto; padding-bottom: 120px; }
+        h1 { font-size:26px; font-weight:900; text-transform:uppercase; letter-spacing:-1px; margin-bottom:5px; }
+        .subtitle { color:#555; margin-bottom:20px; font-size:10px; font-weight:700; text-transform:uppercase; }
+        .list { display:flex; flex-direction:column; gap:10px; }
+        .ticket { background:var(--card); border:1px solid #222; border-left: 4px solid #333; border-radius:12px; padding:15px; display:flex; justify-content:space-between; align-items:center; }
+        .info h3 { font-size:15px; font-weight:900; text-transform:uppercase; }
+        .info p { color:#666; font-size:11px; margin-top:2px; }
+        .right-side { text-align:right; display:flex; align-items:center; gap:12px; }
+        .price-tag { font-size:15px; font-weight:900; color:#888; }
+        .qty-ctrl { display:flex; align-items:center; gap:8px; background:#1a1a1a; padding:4px 8px; border-radius:8px; }
+        .qty-btn { background:none; color:#fff; border:none; width:20px; font-size:18px; cursor:pointer; font-weight:900; }
+        .qty-num { font-size:13px; font-weight:900; min-width:15px; text-align:center; }
         
-        h1 { font-size:40px; font-weight:900; margin-bottom:10px; text-transform:uppercase; letter-spacing:-1px; }
-        .subtitle { color:#666; margin-bottom:30px; font-size:13px; font-weight:700; text-transform:uppercase; }
-        
-        .list { display:flex; flex-direction:column; gap:18px; }
-        
-        .ticket { 
-            background:var(--card); border:1px solid #222; border-left: 8px solid #333; 
-            border-radius:16px; padding:25px; display:flex; justify-content:space-between; align-items:center;
-            transition: transform 0.2s;
+        /* Riepilogo in basso a destra stile Apple */
+        .summary-bar {
+            position: fixed; bottom: 25px; right: 20px; background: #fff; color: #000;
+            padding: 12px 20px; border-radius: 40px; display: none; align-items: center;
+            gap: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); z-index: 999;
         }
-        .ticket:hover { transform: translateY(-2px); border-color: #444; }
+        .total-info { line-height: 1; }
+        .total-info span { font-size: 9px; font-weight: 800; text-transform: uppercase; color: #888; }
+        .total-info h4 { font-size: 18px; font-weight: 900; }
+        .checkout-btn { background: #000; color: #fff; padding: 10px 18px; border-radius: 30px; font-size: 11px; font-weight: 900; text-transform: uppercase; border: none; cursor: pointer; }
 
-        .tag { 
-            font-size:10px; font-weight:900; padding:4px 10px; border-radius:6px; 
-            display:inline-block; margin-bottom:10px; text-transform:uppercase; border: 1px solid;
-        }
-        
-        .info h3 { font-size:24px; font-weight:900; text-transform:uppercase; line-height:1; }
-        .info p { color:#777; font-size:15px; margin-top:6px; max-width: 400px; }
-        
-        .right-side { text-align:right; min-width:160px; }
-        .price { font-size:28px; font-weight:900; display: block; margin-bottom: 15px;}
-        
-        /* Selettore Quantità Stile Zceed */
-        .qty-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 12px;
-            margin-bottom: 15px;
-        }
-        .qty-btn {
-            background: #222;
-            color: #fff;
-            border: 1px solid #333;
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 900;
-            transition: 0.2s;
-        }
-        .qty-btn:hover { background: #333; }
-        .qty-num { font-size: 18px; font-weight: 900; min-width: 25px; text-align: center; }
-
-        .btn { 
-            background:#fff; color:#000; padding:12px 25px; border-radius:12px; 
-            text-decoration:none; font-weight:900; font-size:13px; 
-            display:inline-block; border: none; cursor: pointer; text-transform: uppercase;
-        }
-        .btn:hover { background: #eee; }
-        
-        .flash { color:#ff4757; font-size:12px; font-weight:800; display:block; margin-top:6px; }
-
-        @media (max-width: 600px) {
-            .ticket { flex-direction: column; align-items: flex-start; gap: 20px; }
-            .right-side { text-align: left; width: 100%; }
-            .qty-wrapper { justify-content: flex-start; }
+        @media (min-width: 1024px) {
+            h1 { font-size: 38px; }
+            .ticket { padding: 22px; }
+            .info h3 { font-size: 20px; }
+            .summary-bar { bottom: 40px; right: 40px; transform: scale(1.1); }
         }
     </style>
 </head>
@@ -76,100 +45,44 @@
 
     <div class="container">
         <h1>BIGLIETTI</h1>
-        <p class="subtitle">Seleziona la quantità e procedi</p>
-        <div id="ticket-list" class="list">Caricamento tickets...</div>
+        <p class="subtitle">Scegli la quantità</p>
+        <div id="ticket-list" class="list"></div>
+    </div>
+
+    <div id="summary" class="summary-bar">
+        <div class="total-info">
+            <span>Totale</span>
+            <h4 id="grand-total">0€</h4>
+        </div>
+        <button class="checkout-btn" onclick="goToN8n()">Checkout</button>
     </div>
 
     <script>
+        let cart = {};
         async function fetchTickets() {
             const container = document.getElementById('ticket-list');
-            try {
-                // Carica il JSON aggiornato dall'AI
-                const r = await fetch('dati-ticket.json?v=' + Date.now());
-                const data = await r.json();
-                let tickets = Array.isArray(data) ? data : (data[""] || []);
-
-                const cleanTickets = tickets
-                    .filter(t => t.nome && t.nome.trim() !== "")
-                    .filter((v, i, a) => a.findIndex(t => t.nome === v.nome) === i);
-
-                if (cleanTickets.length === 0) {
-                    container.innerHTML = "<p style='color:#444'>Nessun biglietto disponibile.</p>";
-                    return;
-                }
-
-                container.innerHTML = cleanTickets.map((t, i) => {
-                    const c = t.colore || '#333';
-                    const tagHtml = (t.tag && t.tag.trim() !== "" && t.tag.toLowerCase() !== 'off') 
-                        ? `<span class="tag" style="color:${c}; border-color:${c}">${t.tag}</span>` 
-                        : '';
-
-                    return `
-                    <div class="ticket" style="border-left-color: ${c}">
-                        <div class="info">
-                            ${tagHtml}
-                            <h3>${t.nome}</h3>
-                            <p>${t.descrizione || ''}</p>
-                            ${t.flashSaleAttivo === "TRUE" || t.flashSaleAttivo === true ? `<span class="flash">${t.flashSaleMsg}</span>` : ''}
+            const r = await fetch('dati-ticket.json?v=' + Date.now());
+            const data = await r.json();
+            let tickets = Array.isArray(data) ? data : (data[""] || []);
+            container.innerHTML = tickets.filter(t => t.nome).map((t, i) => {
+                cart[i] = { nome: t.nome, prezzo: parseInt(t.prezzo), qta: 0 };
+                return `
+                <div class="ticket" style="border-left-color: ${t.colore || '#333'}">
+                    <div class="info"><h3>${t.nome}</h3><p>${t.descrizione || ''}</p></div>
+                    <div class="right-side">
+                        <span class="price-tag">${t.prezzo}€</span>
+                        <div class="qty-ctrl">
+                            <button class="qty-btn" onclick="update(${i}, -1)">-</button>
+                            <span class="qty-num" id="q-${i}">0</span>
+                            <button class="qty-btn" onclick="update(${i}, 1)">+</button>
                         </div>
-                        <div class="right-side">
-                            <span class="price">${t.prezzo},00 €</span>
-                            <div class="qty-wrapper">
-                                <button class="qty-btn" onclick="updateQty(${i}, -1)">-</button>
-                                <span class="qty-num" id="qty-${i}">1</span>
-                                <button class="qty-btn" onclick="updateQty(${i}, 1)">+</button>
-                            </div>
-                            <button class="btn" onclick="checkout(${i}, '${t.nome}', ${t.prezzo})">Acquista</button>
-                        </div>
-                    </div>`;
-                }).join('');
-            } catch (err) { 
-                container.innerHTML = '<p>Errore di sincronizzazione dati...</p>'; 
-            }
+                    </div>
+                </div>`;
+            }).join('');
         }
 
-        // Gestione Quantità
-        window.updateQty = (id, val) => {
-            const el = document.getElementById(`qty-${id}`);
-            let current = parseInt(el.innerText);
-            el.innerText = Math.max(1, current + val);
-        };
-
-        // Invio a n8n per Generazione PDF
-        window.checkout = async (id, nome, prezzo) => {
-            const qta = document.getElementById(`qty-${id}`).innerText;
-            const totale = qta * prezzo;
-            
-            // Messaggio di conferma (puoi sostituirlo con un redirect a Stripe)
-            const conferma = confirm(`Confermi l'acquisto di ${qta}x ${nome} per ${totale}€?`);
-            
-            if(conferma) {
-                try {
-                    // Sostituisci l'URL qui sotto con il tuo Webhook di n8n
-                    const webhookUrl = 'https://n8n.tuodominio.com/webhook/acquisto'; 
-                    
-                    /* scommenta questo blocco per attivare l'invio reale
-                    await fetch(webhookUrl, {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({
-                            event: "acquisto_sito",
-                            ticket: nome,
-                            quantita: qta,
-                            totale: totale,
-                            cliente: "Robert Constantin Cioroaba"
-                        })
-                    });
-                    alert("Richiesta inviata! Riceverai il ticket a breve.");
-                    */
-                    alert("Simulazione: n8n sta generando il tuo PDF...");
-                } catch (e) {
-                    alert("Errore nell'invio della richiesta.");
-                }
-            }
-        };
-
-        fetchTickets();
-    </script>
-</body>
-</html>
+        window.update = (id, delta) => {
+            cart[id].qta = Math.max(0, cart[id].qta + delta);
+            document.getElementById(`q-${id}`).innerText = cart[id].qta;
+            let total = 0, items = 0;
+            for (
