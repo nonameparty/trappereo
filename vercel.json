@@ -1,6 +1,8 @@
 {
   "rewrites": [
     { "source": "/", "destination": "/public/index.html" },
+    { "source": "/tickets.html", "destination": "/public/tickets.html" },
+    { "source": "/dati-ticket.json", "destination": "/public/dati-ticket.json" },
     { "source": "/(.*)", "destination": "/public/$1" }
   ]
 }
