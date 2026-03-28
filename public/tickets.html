@@ -6,7 +6,7 @@
     <title>Tickets | TRAPPEREO</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #000; --card: #111; --sub: #888; }
+        :root { --bg: #000; --card: #111; --sub: #888; --accent: #fff; }
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; }
         body { background:var(--bg); color:#fff; padding:20px; overflow-x: hidden; }
         
@@ -25,11 +25,11 @@
 
         .info h3 { font-size:20px; font-weight:900; text-transform:uppercase; letter-spacing:-0.5px; }
         .info p { color:#666; font-size:13px; margin-top:5px; line-height: 1.3; }
+        .info .disclaimer { color:#666; font-size:13px; margin-top:2px; display: block; }
         
         .right-side { text-align:right; display:flex; align-items:center; gap:18px; }
         .price-tag { font-size:18px; font-weight:900; color:#fff; }
 
-        /* Qty Control più grande per touch iPhone */
         .qty-ctrl { 
             display:flex; align-items:center; gap:12px; 
             background:#1a1a1a; padding:8px 15px; border-radius:10px;
@@ -38,7 +38,7 @@
         .qty-btn { background:none; color:#fff; border:none; width:25px; height:25px; font-size:22px; cursor:pointer; font-weight:900; display:flex; align-items:center; justify-content:center; }
         .qty-num { font-size:16px; font-weight:900; min-width:20px; text-align:center; }
 
-        /* Checkout Bar - Larga e Visibile */
+        /* Checkout Bar */
         .checkout-bar {
             position: fixed; bottom: 30px; right: 20px;
             background: #fff; color: #000;
@@ -57,20 +57,39 @@
             text-transform: uppercase; border: none; cursor: pointer;
         }
 
+        /* Modal Nominativi */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 1000; display: none;
+            padding: 20px; overflow-y: auto;
+        }
+        .modal-content { max-width: 600px; margin: 0 auto; padding-top: 20px; padding-bottom: 50px; }
+        .guest-section { 
+            background: #111; border: 1px solid #222; 
+            border-radius: 15px; padding: 20px; margin-bottom: 20px; 
+        }
+        .guest-section h4 { text-transform: uppercase; font-size: 12px; margin-bottom: 15px; color: #555; }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 10px; text-transform: uppercase; color: #888; margin-bottom: 5px; }
+        .input-group input { 
+            width: 100%; background: #1a1a1a; border: 1px solid #333; 
+            padding: 14px; border-radius: 10px; color: #fff; font-size: 16px; 
+        }
+        .close-modal { color: #555; text-decoration: none; font-size: 12px; text-transform: uppercase; display: block; margin-bottom: 25px; font-weight: 800; }
+
         @media (min-width: 1024px) {
             h1 { font-size: 45px; }
             .ticket { padding: 30px; }
             .info h3 { font-size: 24px; }
-            .checkout-bar { bottom: 40px; right: 40px; transform: scale(1.1); }
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
+    <div class="container" id="main-page">
         <h1>BIGLIETTI</h1>
         <p class="subtitle">Scegli la quantità</p>
-        <div id="ticket-list" class="list">Caricamento in corso...</div>
+        <div id="ticket-list" class="list">Caricamento tickets...</div>
     </div>
 
     <div id="summary" class="checkout-bar">
@@ -78,7 +97,35 @@
             <span>Totale</span>
             <h4 id="grand-total">0€</h4>
         </div>
-        <button class="checkout-btn" onclick="goToN8n()">Checkout</button>
+        <button class="checkout-btn" onclick="openNominativi()">Checkout</button>
+    </div>
+
+    <div id="checkout-modal" class="modal">
+        <div class="modal-content">
+            <a href="javascript:void(0)" onclick="closeModal()" class="close-modal">← Torna indietro</a>
+            <h1>DETTAGLI</h1>
+            <p class="subtitle">Dati per l'ingresso nominativo</p>
+            
+            <form id="checkout-form">
+                <div id="guests-container"></div>
+                
+                <div class="guest-section">
+                    <h4>Contatto per l'invio</h4>
+                    <div class="input-group">
+                        <label>Email principale</label>
+                        <input type="email" id="main-email" required placeholder="Email">
+                    </div>
+                    <div class="input-group">
+                        <label>Telefono</label>
+                        <input type="tel" id="main-phone" required placeholder="Telefono">
+                    </div>
+                </div>
+
+                <button type="submit" style="width: 100%; padding: 20px; background: #fff; color: #000; font-weight: 900; border-radius: 15px; border: none; font-size: 16px; text-transform: uppercase; cursor: pointer;">
+                    Genera Biglietti
+                </button>
+            </form>
+        </div>
     </div>
 
     <script>
@@ -102,6 +149,7 @@
                         <div class="info">
                             <h3>${t.nome}</h3>
                             <p>${t.descrizione || ''}</p>
+                            <span class="disclaimer">*Drink alcolico se maggiorenne o analcolico se minorenne</span>
                         </div>
                         <div class="right-side">
                             <span class="price-tag">${t.prezzo}€</span>
@@ -119,19 +167,78 @@
         window.update = (id, delta) => {
             cart[id].qta = Math.max(0, cart[id].qta + delta);
             document.getElementById(`q-${id}`).innerText = cart[id].qta;
-            
             let total = 0, items = 0;
             for (let k in cart) { total += cart[k].qta * cart[k].prezzo; items += cart[k].qta; }
-            
             document.getElementById('grand-total').innerText = total + '€';
             document.getElementById('summary').style.display = items > 0 ? 'flex' : 'none';
         };
 
-        function goToN8n() {
+        window.closeModal = () => { document.getElementById('checkout-modal').style.display = 'none'; };
+
+        function openNominativi() {
             const scelti = Object.values(cart).filter(i => i.qta > 0);
-            alert("Checkout: " + JSON.stringify(scelti));
-            // Qui colleghi il tuo webhook
+            const container = document.getElementById('guests-container');
+            container.innerHTML = '';
+            
+            let count = 1;
+            scelti.forEach(t => {
+                for(let n = 0; n < t.qta; n++) {
+                    container.innerHTML += `
+                        <div class="guest-section">
+                            <h4>Biglietto ${count}: ${t.nome}</h4>
+                            <div class="input-group">
+                                <label>Nome</label>
+                                <input type="text" name="nome_${count}" required>
+                            </div>
+                            <div class="input-group">
+                                <label>Cognome</label>
+                                <input type="text" name="cognome_${count}" required>
+                            </div>
+                        </div>
+                    `;
+                    count++;
+                }
+            });
+            document.getElementById('checkout-modal').style.display = 'block';
         }
+
+        document.getElementById('checkout-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const scelti = Object.values(cart).filter(i => i.qta > 0);
+            
+            const payload = {
+                contatto: {
+                    email: document.getElementById('main-email').value,
+                    tel: document.getElementById('main-phone').value
+                },
+                biglietti: []
+            };
+
+            let index = 1;
+            scelti.forEach(t => {
+                for(let n = 0; n < t.qta; n++) {
+                    payload.biglietti.push({
+                        tipo: t.nome,
+                        nome: formData.get(`nome_${index}`),
+                        cognome: formData.get(`cognome_${index}`)
+                    });
+                    index++;
+                }
+            });
+
+            console.log("Dati per n8n:", payload);
+            alert("Dati inviati a n8n! Generazione ticket in corso...");
+            
+            // Per collegare n8n rimuovi il commento qui sotto e metti il tuo URL
+            /*
+            await fetch('TUO_WEBHOOK_URL', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
+            });
+            */
+        };
 
         fetchTickets();
     </script>
