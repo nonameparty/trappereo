@@ -8,83 +8,65 @@
     <style>
         :root { --accent: #2ecc71; --bg: #000; --card: #111; }
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; }
-        body { background:var(--bg); color:#fff; padding:40px 20px; }
-        .container { max-width:800px; margin:0 auto; }
-        h1 { font-size:40px; font-weight:900; margin-bottom:10px; text-transform:uppercase; }
-        .subtitle { color:#666; margin-bottom:40px; font-size:14px; font-weight:700; text-transform:uppercase; letter-spacing:1px; }
+        body { background:var(--bg); color:#fff; padding:20px; } /* Ridotto padding */
+        .container { max-width:600px; margin:0 auto; } /* Più stretto = più bello */
+        h1 { font-size:32px; font-weight:900; margin-bottom:5px; text-transform:uppercase; }
+        .subtitle { color:#666; margin-bottom:20px; font-size:12px; font-weight:700; text-transform:uppercase; }
         
-        .list { display:flex; flex-direction:column; gap:20px; }
+        .list { display:flex; flex-direction:column; gap:12px; } /* Gap ridotto */
         .ticket { 
             background:var(--card); 
             border:1px solid #222; 
-            border-radius:20px; 
-            padding:30px; 
+            border-left: 6px solid #222; /* Bordo laterale per il colore */
+            border-radius:12px; 
+            padding:20px; 
             display:flex; 
             justify-content:space-between; 
             align-items:center;
-            transition: transform 0.2s;
         }
-        .ticket:hover { border-color:#333; }
 
         .tag { 
-            font-size:10px; 
-            color:var(--accent); 
+            font-size:9px; 
             font-weight:900; 
-            border:1px solid var(--accent); 
-            padding:4px 10px; 
-            border-radius:6px; 
+            padding:3px 8px; 
+            border-radius:4px; 
             display:inline-block; 
-            margin-bottom:12px; 
+            margin-bottom:8px; 
+            border: 1px solid;
         }
-        .info h3 { font-size:24px; font-weight:900; margin-bottom:8px; }
-        .info p { color:#888; font-size:15px; line-height:1.4; max-width:400px; }
+        .info h3 { font-size:19px; font-weight:900; }
+        .info p { color:#777; font-size:13px; line-height:1.2; }
         
-        .right-side { text-align:right; min-width:150px; }
-        .price { font-size:32px; font-weight:900; display:block; margin-bottom:15px; }
-        .btn { 
-            background:#fff; 
-            color:#000; 
-            padding:12px 24px; 
-            border-radius:10px; 
-            text-decoration:none; 
-            font-weight:900; 
-            font-size:14px;
-            display:inline-block;
-        }
-        .flash-msg { color:#ff4757; font-size:12px; font-weight:700; margin-top:10px; display:block; }
+        .right-side { text-align:right; min-width:100px; }
+        .price { font-size:22px; font-weight:900; }
+        .btn { background:#fff; color:#000; padding:8px 16px; border-radius:8px; text-decoration:none; font-weight:900; font-size:12px; margin-top:10px; display:inline-block; }
+        .flash-msg { color:#ff4757; font-size:11px; font-weight:700; margin-top:5px; display:block; }
 
         @media (max-width: 600px) {
-            .ticket { flex-direction: column; align-items: flex-start; gap: 20px; }
-            .right-side { text-align: left; }
+            .ticket { padding: 15px; } /* Più compatto su mobile */
         }
     </style>
 </head>
 <body>
-
     <div class="container">
         <h1>Biglietti</h1>
-        <p class="subtitle">Seleziona la quantità e vai al pagamento</p>
-        
-        <div id="ticket-list" class="list">
-            </div>
+        <p class="subtitle">Seleziona e vai al pagamento</p>
+        <div id="ticket-list" class="list">Caricamento...</div>
     </div>
 
     <script>
         async function fetchTickets() {
             const container = document.getElementById('ticket-list');
             try {
-                // Fetch con timestamp per evitare la cache del browser
                 const r = await fetch('dati-ticket.json?v=' + Date.now());
                 const tickets = await r.json();
 
-                if (!Array.isArray(tickets)) {
-                    throw new Error("Formato JSON non valido");
-                }
-
-                container.innerHTML = tickets.map(t => `
-                    <div class="ticket">
+                container.innerHTML = tickets.map(t => {
+                    const c = t.colore || '#333'; // Prende il colore dal foglio
+                    return `
+                    <div class="ticket" style="border-left-color: ${c}">
                         <div class="info">
-                            <span class="tag">${t.tag}</span>
+                            <span class="tag" style="color: ${c}; border-color: ${c}">${t.tag}</span>
                             <h3>${t.nome}</h3>
                             <p>${t.descrizione}</p>
                             ${t.flashSaleAttivo ? `<span class="flash-msg">${t.flashSaleMsg}</span>` : ''}
@@ -92,18 +74,14 @@
                         <div class="right-side">
                             <span class="price">${t.prezzo},00 €</span>
                             <a href="#" class="btn">AGGIUNGI</a>
-                            <p style="font-size:10px; color:#444; margin-top:10px;">DISPONIBILI: ${t.postiDisponibili}</p>
+                            <p style="font-size:9px; color:#444; margin-top:5px;">DISPONIBILI: ${t.postiDisponibili}</p>
                         </div>
-                    </div>
-                `).join('');
-
+                    </div>`;
+                }).join('');
             } catch (err) {
-                console.error(err);
-                container.innerHTML = '<p style="color:red">Errore nel caricamento dei biglietti. Riprova tra poco.</p>';
+                container.innerHTML = '<p style="color:red">Errore caricamento.</p>';
             }
         }
-
-        // Carica i ticket all'avvio
         fetchTickets();
     </script>
 </body>
