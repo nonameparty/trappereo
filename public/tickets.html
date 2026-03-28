@@ -8,84 +8,116 @@
     <style>
         :root { --purple: #8a2be2; --dark: #0e0e0e; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: #000; color: white; text-align: center; }
-        .navbar { padding: 20px 5%; border-bottom: 1px solid #111; display: flex; justify-content: space-between; align-items: center; }
-        .nav-logo { font-weight: 900; letter-spacing: 2px; text-decoration: none; color: white; }
+        body { background: #000; color: white; text-align: center; min-height: 100vh; }
         
-        .container { padding: 40px 5%; max-width: 600px; margin: 0 auto; }
-        #event-title { font-size: 32px; font-weight: 900; text-transform: uppercase; margin-bottom: 30px; color: white; }
-        
+        .navbar { padding: 20px 5%; border-bottom: 1px solid #111; display: flex; justify-content: space-between; align-items: center; background: #000; position: sticky; top: 0; z-index: 100; }
+        .nav-logo { font-weight: 900; letter-spacing: 2px; text-decoration: none; color: white; font-size: 1.2rem; }
+        .nav-back { color: #555; text-decoration: none; font-weight: 700; font-size: 0.9rem; transition: 0.3s; }
+        .nav-back:hover { color: var(--purple); }
+
+        .container { padding: 40px 5%; max-width: 1200px; margin: 0 auto; }
+        #event-title { font-size: clamp(24px, 5vw, 40px); font-weight: 900; text-transform: uppercase; margin-bottom: 40px; letter-spacing: -1px; }
+
+        /* GRID DEI TICKETS */
+        #ticket-box { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+            gap: 25px; 
+            justify-content: center;
+        }
+
         .card { 
             background: var(--dark); 
             border: 2px solid #222; 
             padding: 40px; 
-            border-radius: 30px; 
-            transition: 0.3s;
+            border-radius: 35px; 
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            display: flex; 
+            flex-direction: column; 
+            text-align: center;
             position: relative;
         }
-        .card.premium { border-color: var(--purple); box-shadow: 0 0 30px rgba(138,43,226,0.2); }
-        
-        .tag { background: var(--purple); color: white; padding: 5px 15px; border-radius: 50px; font-size: 10px; font-weight: 900; text-transform: uppercase; margin-bottom: 15px; display: inline-block; }
-        .price { font-size: 60px; font-weight: 900; margin: 20px 0; display: block; }
-        .desc { color: #888; font-size: 15px; margin-bottom: 25px; line-height: 1.5; }
-        .info { font-size: 12px; color: #555; margin-bottom: 20px; text-transform: uppercase; font-weight: 700; }
+        .card:hover { transform: translateY(-10px); border-color: var(--purple); }
+        .card.premium { border-color: var(--purple); box-shadow: 0 10px 40px rgba(138, 43, 226, 0.15); }
+
+        .tag { background: var(--purple); color: white; padding: 6px 15px; border-radius: 50px; font-size: 11px; font-weight: 900; text-transform: uppercase; margin-bottom: 20px; align-self: center; }
+        .price { font-size: 55px; font-weight: 900; margin: 15px 0; letter-spacing: -2px; }
+        .desc { color: #888; font-size: 15px; margin-bottom: 30px; line-height: 1.6; flex-grow: 1; }
+        .info { font-size: 12px; color: #444; margin-bottom: 20px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
 
         .btn { 
             display: block; 
-            background: white; 
-            color: black; 
-            padding: 20px; 
-            border-radius: 15px; 
+            background: #fff; 
+            color: #000; 
+            padding: 18px; 
+            border-radius: 18px; 
             text-decoration: none; 
             font-weight: 900; 
             text-transform: uppercase; 
-            transition: 0.3s;
+            transition: 0.3s; 
+            border: none;
         }
-        .btn:hover { background: var(--purple); color: white; }
+        .btn:hover { background: var(--purple); color: #fff; }
         .btn.disabled { background: #222; color: #555; cursor: not-allowed; }
+
+        @media (max-width: 480px) { .container { padding: 20px; } .card { padding: 30px; } }
     </style>
 </head>
 <body>
 
     <nav class="navbar">
         <a href="/" class="nav-logo">TRAPPEREO</a>
-        <a href="/" style="color:#555; text-decoration:none; font-weight:700;">← HOME</a>
+        <a href="/" class="nav-back">← HOME</a>
     </nav>
 
     <div class="container">
-        <h1 id="event-title">CARICAMENTO...</h1>
+        <h1 id="event-title">SINCRONIZZAZIONE...</h1>
         <div id="ticket-box">
             </div>
     </div>
 
     <script>
-        async function loadTicket() {
+        async function loadTickets() {
             try {
-                const res = await fetch('dati-ticket.json?v=' + Math.random());
+                // Fetch del file JSON generato da n8n
+                const res = await fetch('dati-ticket.json?t=' + Date.now());
                 if (!res.ok) throw new Error("File non trovato");
+                
                 const data = await res.json();
                 
-                document.getElementById('event-title').innerText = "DISPONIBILITÀ ATTUALE";
+                // Forza i dati in un array (lista) anche se n8n manda un oggetto singolo
+                const tickets = Array.isArray(data) ? data : [data];
                 
+                document.getElementById('event-title').innerText = "DISPONIBILITÀ ATTUALE";
                 const box = document.getElementById('ticket-box');
-                box.innerHTML = `
-                    <div class="card ${data.premium ? 'premium' : ''}">
-                        <span class="tag">${data.tag}</span>
-                        <h2 style="font-size:28px; font-weight:900;">${data.nome}</h2>
-                        <span class="price">${data.prezzo}€</span>
-                        <p class="desc">${data.descrizione}</p>
-                        <p class="info">Posti rimasti: ${data.postiDisponibili}</p>
-                        <a href="#" class="btn ${data.active ? '' : 'disabled'}">
-                            ${data.active ? 'ACQUISTA ORA' : 'NON DISPONIBILE'}
+                
+                if (tickets.length === 0) {
+                    box.innerHTML = "<p>Nessun ticket disponibile al momento.</p>";
+                    return;
+                }
+
+                box.innerHTML = tickets.map(t => `
+                    <div class="card ${t.premium ? 'premium' : ''}">
+                        ${t.tag ? `<span class="tag">${t.tag}</span>` : ''}
+                        <h2 style="font-size: 26px; font-weight: 900;">${t.nome}</h2>
+                        <span class="price">${t.prezzo}€</span>
+                        <p class="desc">${t.descrizione}</p>
+                        <p class="info">Posti rimasti: ${t.postiDisponibili || 'N/A'}</p>
+                        <a href="${t.link || '#'}" class="btn ${t.active ? '' : 'disabled'}">
+                            ${t.active ? (t.postiDisponibili > 0 ? 'ACQUISTA ORA' : 'SOLDOUT') : 'NON DISPONIBILE'}
                         </a>
                     </div>
-                `;
+                `).join('');
+
             } catch (err) {
-                document.getElementById('event-title').innerText = "ERRORE SINCRO";
-                console.error(err);
+                document.getElementById('event-title').innerText = "ERRORE CONNESSIONE";
+                document.getElementById('ticket-box').innerHTML = "<p style='color:#555'>I ticket non sono ancora pronti o n8n è offline.</p>";
+                console.error("Errore:", err);
             }
         }
-        loadTicket();
+
+        // Avvio automatico
+        loadTickets();
     </script>
 </body>
 </html>
