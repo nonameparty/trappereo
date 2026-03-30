@@ -5,16 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tickets | TRAPPEREO</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root { --bg: #000; --card: #111; --sub: #888; --accent: #7866df; --panna: #ddd; --error: #ff4444; }
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; }
         body { background:var(--bg); color:#fff; padding:20px; }
         
+        /* Stile Pagina Principale */
         .container { max-width:800px; margin:0 auto; padding-bottom: 140px; }
         h1 { font-size:34px; font-weight:900; text-transform:uppercase; letter-spacing:-1.5px; margin-bottom:8px; }
         .subtitle { color:#555; margin-bottom:25px; font-size:11px; font-weight:700; text-transform:uppercase; }
-        
         .list { display:flex; flex-direction:column; gap:12px; }
         .ticket { 
             background:var(--card); border:1px solid #222; border-left: 5px solid #333; 
@@ -23,13 +24,11 @@
         }
         .info h3 { font-size:20px; font-weight:900; text-transform:uppercase; }
         .info p { color:#666; font-size:13px; margin-top:4px; }
-        
-        .final-disclaimer { color:#555; font-size:12px; margin-top:20px; font-weight: 500; }
-
         .qty-ctrl { display:flex; align-items:center; gap:12px; background:#1a1a1a; padding:8px 15px; border-radius:10px; border: 1px solid #333; }
         .qty-btn { background:none; color:#fff; border:none; font-size:22px; cursor:pointer; font-weight:900; }
         .qty-num { font-size:16px; font-weight:900; min-width:20px; text-align:center; }
 
+        /* Checkout Bar */
         .checkout-bar {
             position: fixed; bottom: 25px; right: 20px; background: #fff; color: #000;
             padding: 12px 20px; border-radius: 40px; display: none; align-items: center; gap: 15px;
@@ -37,25 +36,30 @@
         }
         .checkout-btn { background: var(--accent); color: #fff; padding: 10px 22px; border-radius: 30px; font-size: 12px; font-weight: 900; text-transform: uppercase; border: none; cursor: pointer; }
 
+        /* Modal Nominativi */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000; display: none; padding: 20px; overflow-y: auto; }
         .modal-content { max-width: 600px; margin: 0 auto; padding-bottom: 50px; }
         .guest-section { background: #111; border: 1px solid #222; border-radius: 15px; padding: 22px; margin-bottom: 15px; }
-        .guest-type-title { font-size: 14px; font-weight: 900; text-transform: uppercase; color: var(--accent); margin-bottom: 15px; display: block; }
-        
         .input-group { margin-bottom: 14px; }
         .input-group label { display: block; font-size: 10px; text-transform: uppercase; color: #fff; margin-bottom: 6px; font-weight: 700; }
         .input-group input { width: 100%; background: #1a1a1a; border: 1px solid #333; padding: 14px; border-radius: 10px; color: #fff; font-size: 16px; outline: none; }
-        .input-group input:disabled { opacity: 0.4; cursor: not-allowed; }
-        
-        .drink-info { color: var(--panna); font-size: 13px; margin-top: 8px; font-weight: 500; }
-        .age-error { background: var(--error); color: #fff; padding: 12px; border-radius: 10px; font-size: 12px; font-weight: 900; margin-top: 10px; display: none; text-transform: uppercase; }
+        .input-group input:disabled { opacity: 0.3; }
 
-        .summary-box { background: #1a1a1a; border-radius: 15px; padding: 20px; margin: 20px 0; text-align: center; border: 1px dashed #333; }
-        .summary-box p { font-size: 11px; color: #888; text-transform: uppercase; font-weight: 800; }
-        .summary-box h2 { font-size: 32px; font-weight: 900; color: #fff; }
+        /* TEMPLATE PDF (Nascosto) */
+        #pdf-template { 
+            position: absolute; left: -9999px; top: 0;
+            width: 500px; background: #000; color: #fff; padding: 40px;
+        }
+        .pdf-header { border-bottom: 1px solid #333; padding-bottom: 20px; margin-bottom: 20px; }
+        .pdf-event { font-size: 28px; font-weight: 900; text-transform: uppercase; line-height: 1; }
+        .pdf-meta { color: var(--accent); font-weight: 800; font-size: 14px; margin-top: 5px; }
+        .pdf-ticket-type { background: #fff; color: #000; display: inline-block; padding: 4px 10px; font-weight: 900; font-size: 12px; margin-top: 15px; border-radius: 4px; }
+        .pdf-user-name { font-size: 22px; font-weight: 900; margin-top: 20px; text-transform: uppercase; }
+        .pdf-footer { margin-top: 30px; font-size: 10px; color: #444; border-top: 1px solid #222; padding-top: 10px; }
 
         .buy-now-btn { width: 100%; padding: 22px; background: #fff; color: #000; font-weight: 900; border-radius: 15px; border: none; font-size: 16px; text-transform: uppercase; cursor: pointer; }
         .buy-now-btn:disabled { background: #333; color: #666; cursor: not-allowed; }
+        .age-error { background: var(--error); color: #fff; padding: 12px; border-radius: 10px; font-size: 11px; font-weight: 900; margin-top: 10px; display: none; }
     </style>
 </head>
 <body>
@@ -64,71 +68,77 @@
         <h1>BIGLIETTI</h1>
         <p class="subtitle">SELEZIONA E VAI AL PAGAMENTO</p>
         <div id="ticket-list" class="list">Caricamento...</div>
-        <div id="disclaimer-area"></div>
     </div>
 
     <div id="summary" class="checkout-bar">
-        <div class="total-box"><span style="font-size:9px; font-weight:800; color:#888; text-transform:uppercase;">Totale</span><h4 id="grand-total" style="font-size:20px; font-weight:900;">0€</h4></div>
+        <h4 id="grand-total" style="font-size:20px; font-weight:900;">0€</h4>
         <button class="checkout-btn" onclick="openNominativi()">Checkout</button>
     </div>
 
     <div id="checkout-modal" class="modal">
         <div class="modal-content">
-            <a href="javascript:void(0)" onclick="closeModal()" style="color:#555; text-decoration:none; font-size:11px; font-weight:800; text-transform:uppercase; display:block; margin: 20px 0;">← Indietro</a>
+            <a href="javascript:void(0)" onclick="closeModal()" style="color:#555; text-decoration:none; font-size:11px; font-weight:800; text-transform:uppercase; display:block; margin-bottom:20px;">← Indietro</a>
             <h1>DETTAGLI</h1>
-            <p class="subtitle">Inserisci i dati per ogni partecipante</p>
-            
             <form id="checkout-form">
                 <div id="guests-container"></div>
-                
                 <div class="guest-section">
-                    <span class="guest-type-title">Contatto Ordine</span>
-                    <div class="input-group"><label>Email per invio biglietti</label><input type="email" id="main-email" required placeholder="esempio@email.it"></div>
-                    <div class="input-group"><label>Cellulare</label><input type="tel" id="main-phone" required placeholder="+39"></div>
+                    <div class="input-group"><label>Email per invio</label><input type="email" id="main-email" required></div>
                 </div>
-
-                <div class="summary-box">
-                    <p>Totale Ordine</p>
-                    <h2 id="final-price-display">0€</h2>
+                <div style="text-align:center; margin:20px 0;">
+                    <p style="font-size:11px; color:#555;">TOTALE ORDINE</p>
+                    <h2 id="final-price-display" style="font-size:32px;">0€</h2>
                 </div>
-
-                <button type="submit" id="final-buy-btn" class="buy-now-btn">Acquista Ora</button>
+                <button type="submit" id="final-buy-btn" class="buy-now-btn">Genera Biglietti</button>
             </form>
+        </div>
+    </div>
+
+    <div id="pdf-template">
+        <div class="pdf-header">
+            <div class="pdf-event">TRAPPEREO</div>
+            <div class="pdf-meta">SABATO 28 MARZO 2026 • ORE 23:00</div>
+            <div id="pdf-type-label" class="pdf-ticket-type">REGULAR TICKET</div>
+        </div>
+        <div style="font-size:10px; color:#555; text-transform:uppercase; font-weight:800;">Titolare del biglietto</div>
+        <div id="pdf-name-label" class="pdf-user-name">MARIO ROSSI</div>
+        <div style="margin-top:20px; font-size:11px; color:#888;" id="pdf-drink-label">1 Drink incluso</div>
+        
+        <div style="margin-top:40px; background:#111; padding:20px; border-radius:10px; text-align:center;">
+            <div style="font-size:24px; letter-spacing:8px; font-weight:200;">|| | ||| || || | ||</div>
+            <div style="font-size:9px; color:#333; margin-top:5px;" id="pdf-id-label">#92929292</div>
+        </div>
+
+        <div class="pdf-footer">
+            Biglietto acquistato tramite il sistema ufficiale TRAPPEREO. [cite: 11]
+            L'ingresso è garantito solo previa verifica del documento d'identità (+16). [cite: 15]
         </div>
     </div>
 
     <script>
         let cart = {};
-        let currentTotal = 0;
         let guestData = [];
         let redirectTimer = null;
-        const { jsPDF } = window.jspdf;
 
         async function fetchTickets() {
-            const container = document.getElementById('ticket-list');
             try {
                 const r = await fetch('dati-ticket.json?v=' + Date.now());
                 const data = await r.json();
                 let tickets = Array.isArray(data) ? data : (data[""] || []);
                 const uniqueTickets = tickets.filter((v, i, a) => v.nome && a.findIndex(t => t.nome === v.nome) === i);
 
-                container.innerHTML = uniqueTickets.map((t, i) => {
+                document.getElementById('ticket-list').innerHTML = uniqueTickets.map((t, i) => {
                     cart[i] = { nome: t.nome, prezzo: parseInt(t.prezzo), qta: 0, desc: t.descrizione };
                     return `
                     <div class="ticket" style="border-left-color: ${t.colore || '#333'}">
                         <div class="info"><h3>${t.nome}</h3><p>${t.descrizione || ''}</p></div>
-                        <div class="right-side">
-                            <span style="font-weight:900; font-size:18px; margin-right:10px">${t.prezzo}€</span>
-                            <div class="qty-ctrl">
-                                <button class="qty-btn" onclick="update(${i}, -1)">-</button>
-                                <span class="qty-num" id="q-${i}">0</span>
-                                <button class="qty-btn" onclick="update(${i}, 1)">+</button>
-                            </div>
+                        <div class="qty-ctrl">
+                            <button class="qty-btn" onclick="update(${i}, -1)">-</button>
+                            <span class="qty-num" id="q-${i}">0</span>
+                            <button class="qty-btn" onclick="update(${i}, 1)">+</button>
                         </div>
                     </div>`;
                 }).join('');
-                document.getElementById('disclaimer-area').innerHTML = `<p class="final-disclaimer">*Drink alcolico se maggiorenne o analcolico se minorenne</p>`;
-            } catch (e) { container.innerHTML = "Errore caricamento dati."; }
+            } catch (e) {}
         }
 
         window.update = (id, delta) => {
@@ -136,143 +146,90 @@
             document.getElementById(`q-${id}`).innerText = cart[id].qta;
             let total = 0, items = 0;
             for (let k in cart) { total += cart[k].qta * cart[k].prezzo; items += cart[k].qta; }
-            currentTotal = total;
             document.getElementById('grand-total').innerText = total + '€';
             document.getElementById('summary').style.display = items > 0 ? 'flex' : 'none';
         };
 
-        window.closeModal = () => {
-            document.getElementById('checkout-modal').style.display = 'none';
-            clearTimeout(redirectTimer);
-        };
+        window.closeModal = () => { document.getElementById('checkout-modal').style.display = 'none'; clearTimeout(redirectTimer); };
 
-        function calculateFinalTotal() {
+        function checkLogic() {
             let finalPrice = 0;
-            let anyValid = false;
+            let validTickets = 0;
             
-            guestData.forEach((guest, i) => {
-                const dobInput = document.getElementById(`dob-${i}`);
-                if (dobInput && dobInput.value) {
-                    const birth = new Date(dobInput.value);
+            guestData.forEach((g, i) => {
+                const dob = document.getElementById(`dob-${i}`).value;
+                if(dob) {
+                    const birth = new Date(dob);
                     const today = new Date("2026-03-28");
                     let age = today.getFullYear() - birth.getFullYear();
                     if (today.getMonth() < birth.getMonth() || (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())) age--;
                     
-                    const isBlocked = age < 16;
-                    document.getElementById(`name-${i}`).disabled = isBlocked;
-                    document.getElementById(`surname-${i}`).disabled = isBlocked;
-                    document.getElementById(`age-error-${i}`).style.display = isBlocked ? 'block' : 'none';
-                    document.getElementById(`drink-info-${i}`).style.display = isBlocked ? 'none' : 'block';
-
-                    if (!isBlocked) {
-                        finalPrice += guest.prezzo;
-                        anyValid = true;
-                        const numMatch = guest.desc.match(/(\d+)\s*drink/i);
-                        const numDrink = numMatch ? numMatch[1] : "1";
-                        document.getElementById(`drink-info-${i}`).innerText = `Hai ${numDrink} drink ${age >= 18 ? 'alcolici' : 'analcolici'} inclusi`;
-                    }
+                    const blocked = age < 16;
+                    document.getElementById(`name-${i}`).disabled = blocked;
+                    document.getElementById(`surname-${i}`).disabled = blocked;
+                    document.getElementById(`err-${i}`).style.display = blocked ? 'block' : 'none';
+                    
+                    if(!blocked) { finalPrice += g.prezzo; validTickets++; }
                 }
             });
 
-            document.getElementById('main-email').disabled = !anyValid;
-            document.getElementById('main-phone').disabled = !anyValid;
             document.getElementById('final-price-display').innerText = finalPrice + '€';
-            document.getElementById('final-buy-btn').disabled = !anyValid || finalPrice === 0;
+            document.getElementById('final-buy-btn').disabled = validTickets === 0;
 
-            if (!anyValid) {
-                if (!redirectTimer) redirectTimer = setTimeout(() => { window.location.reload(); }, 60000);
-            } else {
-                clearTimeout(redirectTimer);
-                redirectTimer = null;
-            }
+            if (validTickets === 0) {
+                if (!redirectTimer) redirectTimer = setTimeout(() => location.reload(), 60000);
+            } else { clearTimeout(redirectTimer); redirectTimer = null; }
         }
-
-        function generaPDF(e) {
-            e.preventDefault();
-            const doc = new jsPDF();
-            const email = document.getElementById('main-email').value;
-            const phone = document.getElementById('main-phone').value;
-            let y = 20;
-
-            doc.setFont("helvetica", "bold");
-            doc.setFontSize(22);
-            doc.text("TRAPPEREO - BIGLIETTO UFFICIALE", 20, y);
-            
-            y += 15;
-            doc.setFontSize(10);
-            doc.setFont("helvetica", "normal");
-            doc.text(`Ordine effettuato da: ${email} | Tel: ${phone}`, 20, y);
-            
-            y += 10;
-            doc.line(20, y, 190, y);
-            
-            guestData.forEach((guest, i) => {
-                const nome = document.getElementById(`name-${i}`).value;
-                const cognome = document.getElementById(`surname-${i}`).value;
-                const dob = document.getElementById(`dob-${i}`).value;
-                
-                // Genera solo se non è disabilitato (quindi ha > 16 anni)
-                if (!document.getElementById(`name-${i}`).disabled && nome) {
-                    y += 15;
-                    doc.setFont("helvetica", "bold");
-                    doc.setFontSize(14);
-                    doc.text(`${guest.nomeTicket}`, 20, y);
-                    
-                    y += 7;
-                    doc.setFontSize(12);
-                    doc.setFont("helvetica", "normal");
-                    doc.text(`Partecipante: ${nome} ${cognome}`, 20, y);
-                    doc.text(`Nato il: ${dob}`, 20, y + 7);
-                    
-                    const drinkTxt = document.getElementById(`drink-info-${i}`).innerText;
-                    doc.setFont("helvetica", "italic");
-                    doc.text(`Incluso: ${drinkTxt}`, 20, y + 14);
-                    y += 20;
-                    doc.line(20, y, 100, y);
-                }
-            });
-
-            y += 20;
-            doc.setFont("helvetica", "bold");
-            doc.setFontSize(16);
-            doc.text(`TOTALE PAGATO: ${document.getElementById('final-price-display').innerText}`, 20, y);
-
-            doc.save(`Ticket_Trappereo_${Date.now()}.pdf`);
-            alert("Il tuo PDF è stato generato!");
-        }
-
-        document.getElementById('checkout-form').addEventListener('submit', generaPDF);
 
         function openNominativi() {
             const scelti = Object.values(cart).filter(i => i.qta > 0);
             const container = document.getElementById('guests-container');
-            container.innerHTML = '';
-            guestData = [];
-            
+            container.innerHTML = ''; guestData = [];
             let count = 0;
             scelti.forEach(t => {
-                for(let n = 0; n < t.qta; n++) {
-                    guestData.push({ nomeTicket: t.nome, prezzo: t.prezzo, desc: t.desc });
+                for(let n=0; n<t.qta; n++) {
+                    guestData.push(t);
                     container.innerHTML += `
                         <div class="guest-section">
-                            <span class="guest-type-title">${t.nome}</span>
-                            <div class="input-group"><label>Nome Partecipante</label><input type="text" id="name-${count}" required placeholder="Nome"></div>
-                            <div class="input-group"><label>Cognome Partecipante</label><input type="text" id="surname-${count}" required placeholder="Cognome"></div>
-                            <div class="input-group">
-                                <label>Data di Nascita</label>
-                                <input type="date" id="dob-${count}" required onchange="calculateFinalTotal()">
-                                <div class="drink-info" id="drink-info-${count}"></div>
-                                <div class="age-error" id="age-error-${count}">NON PUOI ACCEDERE AL LOCALE, L'EVENTO È +16</div>
-                            </div>
+                            <span style="color:var(--accent); font-weight:900; font-size:12px;">${t.nome}</span>
+                            <div class="input-group"><input type="text" id="name-${count}" placeholder="Nome" required></div>
+                            <div class="input-group"><input type="text" id="surname-${count}" placeholder="Cognome" required></div>
+                            <div class="input-group"><label>Data Nascita</label><input type="date" id="dob-${count}" required onchange="checkLogic()"></div>
+                            <div id="err-${count}" class="age-error">NON PUOI ACCEDERE AL LOCALE, L'EVENTO È +16</div>
                         </div>`;
                     count++;
                 }
             });
-            document.getElementById('final-price-display').innerText = '0€';
-            document.getElementById('final-buy-btn').disabled = true;
             document.getElementById('checkout-modal').style.display = 'block';
-            calculateFinalTotal();
+            checkLogic();
         }
+
+        // GENERAZIONE PDF STILE XCEED
+        document.getElementById('checkout-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const template = document.getElementById('pdf-template');
+
+            for (let i = 0; i < guestData.length; i++) {
+                if (document.getElementById(`name-${i}`).disabled) continue;
+
+                // Popola template
+                document.getElementById('pdf-name-label').innerText = document.getElementById(`name-${i}`).value + " " + document.getElementById(`surname-${i}`).value;
+                document.getElementById('pdf-type-label').innerText = guestData[i].nome;
+                document.getElementById('pdf-id-label').innerText = "#" + Math.floor(Math.random() * 90000000 + 10000000);
+                
+                // Screenshot del template
+                const canvas = await html2canvas(template, { backgroundColor: "#000", scale: 2 });
+                const imgData = canvas.toDataURL('image/png');
+                
+                if (i > 0) pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 10, 10, 190, 0);
+            }
+
+            pdf.save("Biglietti_Trappereo.pdf");
+            alert("Biglietti generati con successo!");
+        });
 
         fetchTickets();
     </script>
