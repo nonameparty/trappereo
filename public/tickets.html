@@ -5,17 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tickets | TRAPPEREO</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root { --bg: #000; --card: #111; --sub: #888; --accent: #7866df; --panna: #ddd; --error: #ff4444; }
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; }
         body { background:var(--bg); color:#fff; padding:20px; }
         
-        /* Stile Pagina Principale */
         .container { max-width:800px; margin:0 auto; padding-bottom: 140px; }
         h1 { font-size:34px; font-weight:900; text-transform:uppercase; letter-spacing:-1.5px; margin-bottom:8px; }
         .subtitle { color:#555; margin-bottom:25px; font-size:11px; font-weight:700; text-transform:uppercase; }
+        
         .list { display:flex; flex-direction:column; gap:12px; }
         .ticket { 
             background:var(--card); border:1px solid #222; border-left: 5px solid #333; 
@@ -28,7 +27,6 @@
         .qty-btn { background:none; color:#fff; border:none; font-size:22px; cursor:pointer; font-weight:900; }
         .qty-num { font-size:16px; font-weight:900; min-width:20px; text-align:center; }
 
-        /* Checkout Bar */
         .checkout-bar {
             position: fixed; bottom: 25px; right: 20px; background: #fff; color: #000;
             padding: 12px 20px; border-radius: 40px; display: none; align-items: center; gap: 15px;
@@ -36,7 +34,6 @@
         }
         .checkout-btn { background: var(--accent); color: #fff; padding: 10px 22px; border-radius: 30px; font-size: 12px; font-weight: 900; text-transform: uppercase; border: none; cursor: pointer; }
 
-        /* Modal Nominativi */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000; display: none; padding: 20px; overflow-y: auto; }
         .modal-content { max-width: 600px; margin: 0 auto; padding-bottom: 50px; }
         .guest-section { background: #111; border: 1px solid #222; border-radius: 15px; padding: 22px; margin-bottom: 15px; }
@@ -44,18 +41,6 @@
         .input-group label { display: block; font-size: 10px; text-transform: uppercase; color: #fff; margin-bottom: 6px; font-weight: 700; }
         .input-group input { width: 100%; background: #1a1a1a; border: 1px solid #333; padding: 14px; border-radius: 10px; color: #fff; font-size: 16px; outline: none; }
         .input-group input:disabled { opacity: 0.3; }
-
-        /* TEMPLATE PDF (Nascosto) */
-        #pdf-template { 
-            position: absolute; left: -9999px; top: 0;
-            width: 500px; background: #000; color: #fff; padding: 40px;
-        }
-        .pdf-header { border-bottom: 1px solid #333; padding-bottom: 20px; margin-bottom: 20px; }
-        .pdf-event { font-size: 28px; font-weight: 900; text-transform: uppercase; line-height: 1; }
-        .pdf-meta { color: var(--accent); font-weight: 800; font-size: 14px; margin-top: 5px; }
-        .pdf-ticket-type { background: #fff; color: #000; display: inline-block; padding: 4px 10px; font-weight: 900; font-size: 12px; margin-top: 15px; border-radius: 4px; }
-        .pdf-user-name { font-size: 22px; font-weight: 900; margin-top: 20px; text-transform: uppercase; }
-        .pdf-footer { margin-top: 30px; font-size: 10px; color: #444; border-top: 1px solid #222; padding-top: 10px; }
 
         .buy-now-btn { width: 100%; padding: 22px; background: #fff; color: #000; font-weight: 900; border-radius: 15px; border: none; font-size: 16px; text-transform: uppercase; cursor: pointer; }
         .buy-now-btn:disabled { background: #333; color: #666; cursor: not-allowed; }
@@ -82,7 +67,10 @@
             <form id="checkout-form">
                 <div id="guests-container"></div>
                 <div class="guest-section">
-                    <div class="input-group"><label>Email per invio</label><input type="email" id="main-email" required></div>
+                    <div class="input-group">
+                        <label>Email per invio biglietti</label>
+                        <input type="email" id="main-email" placeholder="esempio@email.it" required>
+                    </div>
                 </div>
                 <div style="text-align:center; margin:20px 0;">
                     <p style="font-size:11px; color:#555;">TOTALE ORDINE</p>
@@ -93,31 +81,9 @@
         </div>
     </div>
 
-    <div id="pdf-template">
-        <div class="pdf-header">
-            <div class="pdf-event">TRAPPEREO</div>
-            <div class="pdf-meta">SABATO 28 MARZO 2026 • ORE 23:00</div>
-            <div id="pdf-type-label" class="pdf-ticket-type">REGULAR TICKET</div>
-        </div>
-        <div style="font-size:10px; color:#555; text-transform:uppercase; font-weight:800;">Titolare del biglietto</div>
-        <div id="pdf-name-label" class="pdf-user-name">MARIO ROSSI</div>
-        <div style="margin-top:20px; font-size:11px; color:#888;" id="pdf-drink-label">1 Drink incluso</div>
-        
-        <div style="margin-top:40px; background:#111; padding:20px; border-radius:10px; text-align:center;">
-            <div style="font-size:24px; letter-spacing:8px; font-weight:200;">|| | ||| || || | ||</div>
-            <div style="font-size:9px; color:#333; margin-top:5px;" id="pdf-id-label">#92929292</div>
-        </div>
-
-        <div class="pdf-footer">
-            Biglietto acquistato tramite il sistema ufficiale TRAPPEREO. [cite: 11]
-            L'ingresso è garantito solo previa verifica del documento d'identità (+16). [cite: 15]
-        </div>
-    </div>
-
     <script>
         let cart = {};
         let guestData = [];
-        let redirectTimer = null;
 
         async function fetchTickets() {
             try {
@@ -127,7 +93,7 @@
                 const uniqueTickets = tickets.filter((v, i, a) => v.nome && a.findIndex(t => t.nome === v.nome) === i);
 
                 document.getElementById('ticket-list').innerHTML = uniqueTickets.map((t, i) => {
-                    cart[i] = { nome: t.nome, prezzo: parseInt(t.prezzo), qta: 0, desc: t.descrizione };
+                    cart[i] = { nome: t.nome, prezzo: parseInt(t.prezzo), qta: 0, desc: t.descrizione, colore: t.colore };
                     return `
                     <div class="ticket" style="border-left-color: ${t.colore || '#333'}">
                         <div class="info"><h3>${t.nome}</h3><p>${t.descrizione || ''}</p></div>
@@ -138,7 +104,7 @@
                         </div>
                     </div>`;
                 }).join('');
-            } catch (e) {}
+            } catch (e) { console.error("Errore caricamento ticket"); }
         }
 
         window.update = (id, delta) => {
@@ -150,24 +116,28 @@
             document.getElementById('summary').style.display = items > 0 ? 'flex' : 'none';
         };
 
-        window.closeModal = () => { document.getElementById('checkout-modal').style.display = 'none'; clearTimeout(redirectTimer); };
+        window.closeModal = () => { document.getElementById('checkout-modal').style.display = 'none'; };
 
         function checkLogic() {
             let finalPrice = 0;
             let validTickets = 0;
             
             guestData.forEach((g, i) => {
-                const dob = document.getElementById(`dob-${i}`).value;
-                if(dob) {
-                    const birth = new Date(dob);
-                    const today = new Date("2026-03-28");
-                    let age = today.getFullYear() - birth.getFullYear();
-                    if (today.getMonth() < birth.getMonth() || (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())) age--;
+                const dobInput = document.getElementById(`dob-${i}`);
+                const nameInput = document.getElementById(`name-${i}`);
+                const surnameInput = document.getElementById(`surname-${i}`);
+                const errBox = document.getElementById(`err-${i}`);
+                
+                if(dobInput.value) {
+                    const birth = new Date(dobInput.value);
+                    const eventDate = new Date("2026-03-28");
+                    let age = eventDate.getFullYear() - birth.getFullYear();
+                    if (eventDate.getMonth() < birth.getMonth() || (eventDate.getMonth() === birth.getMonth() && eventDate.getDate() < birth.getDate())) age--;
                     
                     const blocked = age < 16;
-                    document.getElementById(`name-${i}`).disabled = blocked;
-                    document.getElementById(`surname-${i}`).disabled = blocked;
-                    document.getElementById(`err-${i}`).style.display = blocked ? 'block' : 'none';
+                    nameInput.disabled = blocked;
+                    surnameInput.disabled = blocked;
+                    errBox.style.display = blocked ? 'block' : 'none';
                     
                     if(!blocked) { finalPrice += g.prezzo; validTickets++; }
                 }
@@ -175,10 +145,6 @@
 
             document.getElementById('final-price-display').innerText = finalPrice + '€';
             document.getElementById('final-buy-btn').disabled = validTickets === 0;
-
-            if (validTickets === 0) {
-                if (!redirectTimer) redirectTimer = setTimeout(() => location.reload(), 60000);
-            } else { clearTimeout(redirectTimer); redirectTimer = null; }
         }
 
         function openNominativi() {
@@ -204,31 +170,100 @@
             checkLogic();
         }
 
-        // GENERAZIONE PDF STILE XCEED
+        // LOGICA GENERAZIONE PDF PROFESSIONALE
         document.getElementById('checkout-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF('p', 'mm', 'a4');
-            const template = document.getElementById('pdf-template');
+            const doc = new jsPDF('p', 'mm', 'a4');
 
             for (let i = 0; i < guestData.length; i++) {
                 if (document.getElementById(`name-${i}`).disabled) continue;
+                if (i > 0) doc.addPage();
 
-                // Popola template
-                document.getElementById('pdf-name-label').innerText = document.getElementById(`name-${i}`).value + " " + document.getElementById(`surname-${i}`).value;
-                document.getElementById('pdf-type-label').innerText = guestData[i].nome;
-                document.getElementById('pdf-id-label').innerText = "#" + Math.floor(Math.random() * 90000000 + 10000000);
+                const nome = document.getElementById(`name-${i}`).value.toUpperCase();
+                const cognome = document.getElementById(`surname-${i}`).value.toUpperCase();
+                const nascita = document.getElementById(`dob-${i}`).value;
+                const tipoTicket = guestData[i].nome.toUpperCase();
+                const descTicket = guestData[i].desc.toUpperCase();
+
+                // 1. HEADER NERO (Area Locandina)
+                doc.setFillColor(0, 0, 0);
+                doc.rect(0, 0, 210, 80, 'F');
+                doc.setTextColor(255, 255, 255);
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(40);
+                doc.text("TRAPPEREO", 15, 30);
+                doc.setFontSize(12);
+                doc.text("THE NEW TRAP REGGAETON ERA", 15, 40);
+
+                // 2. BOX SPONSOR (Il riquadro bianco richiesto)
+                doc.setDrawColor(255, 255, 255);
+                doc.rect(130, 15, 65, 25); 
+                doc.setFontSize(8);
+                doc.text("SPONSOR LOGO", 162.5, 30, { align: "center" });
+
+                // 3. INFO EVENTO (Header)
+                doc.setFontSize(10);
+                doc.text("BIELLA, ITALY", 15, 60);
+                doc.text("SABATO 28 MARZO 2026 - ORE 23:00", 15, 66);
+
+                // 4. CORPO BIANCO (Dati Ticket)
+                doc.setTextColor(0, 0, 0);
+                doc.setFontSize(24);
+                doc.text(tipoTicket, 15, 100);
+                doc.setFontSize(10);
+                doc.setFont("helvetica", "normal");
+                doc.text(descTicket, 15, 108);
+
+                // Dati Titolare
+                doc.setFontSize(8); doc.setTextColor(150);
+                doc.text("TOLARE DEL BIGLIETTO", 15, 125);
+                doc.setTextColor(0); doc.setFontSize(18); doc.setFont("helvetica", "bold");
+                doc.text(`${nome} ${cognome}`, 15, 134);
+
+                // Griglia Info Tecniche
+                doc.setDrawColor(230); doc.line(15, 145, 195, 145);
                 
-                // Screenshot del template
-                const canvas = await html2canvas(template, { backgroundColor: "#000", scale: 2 });
-                const imgData = canvas.toDataURL('image/png');
+                doc.setFontSize(8); doc.setTextColor(150); doc.text("APERTURA", 15, 155);
+                doc.setTextColor(0); doc.setFontSize(12); doc.text("23:00", 15, 162);
+
+                doc.setFontSize(8); doc.setTextColor(150); doc.text("ETÀ MIN.", 60, 155);
+                doc.setTextColor(0); doc.setFontSize(12); doc.text("16+", 60, 162);
+
+                doc.setFontSize(8); doc.setTextColor(150); doc.text("DRESS CODE", 105, 155);
+                doc.setTextColor(0); doc.setFontSize(12); doc.text("STYLISH", 105, 162);
+
+                // 5. BARCODE & ID
+                const ticketID = "#TRP-" + Math.floor(Math.random()*1000000);
+                doc.setFont("courier", "bold"); doc.setFontSize(25);
+                doc.text("||||||||||||||||||||||||||||||", 15, 190);
+                doc.setFontSize(8); doc.text(ticketID, 15, 198);
+
+                // 6. BARRA ARANCIONE SICUREZZA (Verticale)
+                doc.setTextColor(180); doc.setFont("helvetica", "normal"); doc.setFontSize(7);
+                const securityStr = `TICKET HOLDER: ${nome} ${cognome} | DOB: ${nascita} | PURCHASED AT TRAPPEREONEW.VERCEL.APP`;
+                doc.text(securityStr, 205, 100, { angle: 90 });
+
+                // 7. FOOTER TERMINI E LOGO
+                const footerY = 270;
+                doc.setDrawColor(240); doc.line(15, footerY, 195, footerY);
+                doc.setFontSize(14); doc.setFont("helvetica", "bold"); doc.setTextColor(0);
+                doc.text("TRAPPEREO.", 15, footerY + 12);
                 
-                if (i > 0) pdf.addPage();
-                pdf.addImage(imgData, 'PNG', 10, 10, 190, 0);
+                doc.setFontSize(6); doc.setFont("helvetica", "normal"); doc.setTextColor(100);
+                const terms = [
+                    "Biglietto nominale e non rimborsabile. Obbligatorio documento d'identità originale (16+).",
+                    "L'accredito online non garantisce l'accesso in caso di mancato rispetto delle norme del locale.",
+                    "Sito ufficiale: trappereonew.vercel.app"
+                ];
+                doc.text(terms, 105, footerY + 8, { align: "center" });
+                
+                doc.setFontSize(8); doc.setTextColor(120, 102, 223);
+                doc.text("trappereonew.vercel.app", 195, footerY + 12, { align: "right" });
             }
 
-            pdf.save("Biglietti_Trappereo.pdf");
-            alert("Biglietti generati con successo!");
+            doc.save("Biglietti_TRAPPEREO.pdf");
+            alert("Processo completato. I biglietti sono stati generati!");
         });
 
         fetchTickets();
