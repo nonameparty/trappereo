@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tickets | TRAPPEREO</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root { --bg: #000; --card: #111; --sub: #888; --accent: #7866df; --panna: #ddd; --error: #ff4444; }
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; }
@@ -101,6 +102,7 @@
         let currentTotal = 0;
         let guestData = [];
         let redirectTimer = null;
+        const { jsPDF } = window.jspdf;
 
         async function fetchTickets() {
             const container = document.getElementById('ticket-list');
@@ -184,6 +186,62 @@
                 redirectTimer = null;
             }
         }
+
+        function generaPDF(e) {
+            e.preventDefault();
+            const doc = new jsPDF();
+            const email = document.getElementById('main-email').value;
+            const phone = document.getElementById('main-phone').value;
+            let y = 20;
+
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(22);
+            doc.text("TRAPPEREO - BIGLIETTO UFFICIALE", 20, y);
+            
+            y += 15;
+            doc.setFontSize(10);
+            doc.setFont("helvetica", "normal");
+            doc.text(`Ordine effettuato da: ${email} | Tel: ${phone}`, 20, y);
+            
+            y += 10;
+            doc.line(20, y, 190, y);
+            
+            guestData.forEach((guest, i) => {
+                const nome = document.getElementById(`name-${i}`).value;
+                const cognome = document.getElementById(`surname-${i}`).value;
+                const dob = document.getElementById(`dob-${i}`).value;
+                
+                // Genera solo se non è disabilitato (quindi ha > 16 anni)
+                if (!document.getElementById(`name-${i}`).disabled && nome) {
+                    y += 15;
+                    doc.setFont("helvetica", "bold");
+                    doc.setFontSize(14);
+                    doc.text(`${guest.nomeTicket}`, 20, y);
+                    
+                    y += 7;
+                    doc.setFontSize(12);
+                    doc.setFont("helvetica", "normal");
+                    doc.text(`Partecipante: ${nome} ${cognome}`, 20, y);
+                    doc.text(`Nato il: ${dob}`, 20, y + 7);
+                    
+                    const drinkTxt = document.getElementById(`drink-info-${i}`).innerText;
+                    doc.setFont("helvetica", "italic");
+                    doc.text(`Incluso: ${drinkTxt}`, 20, y + 14);
+                    y += 20;
+                    doc.line(20, y, 100, y);
+                }
+            });
+
+            y += 20;
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(16);
+            doc.text(`TOTALE PAGATO: ${document.getElementById('final-price-display').innerText}`, 20, y);
+
+            doc.save(`Ticket_Trappereo_${Date.now()}.pdf`);
+            alert("Il tuo PDF è stato generato!");
+        }
+
+        document.getElementById('checkout-form').addEventListener('submit', generaPDF);
 
         function openNominativi() {
             const scelti = Object.values(cart).filter(i => i.qta > 0);
